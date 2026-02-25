@@ -207,6 +207,27 @@ class PluginManager {
     return Array.from(this.plugins.values()).map(p => p.instance);
   }
 
+  isCmdHandlerCommand(cmdName: string): boolean {
+    // 检查命令是否来自 cmdHandlers
+    const cmdInfo = this.commands.get(cmdName);
+    if (!cmdInfo) return false;
+    
+    const plugin = this.plugins.get(cmdInfo.plugin)?.instance;
+    if (!plugin?.cmdHandlers) return false;
+    
+    return cmdName in plugin.cmdHandlers;
+  }
+
+  getPluginCommands(pluginName: string): { commands: string[]; cmdHandlers: string[] } {
+    const plugin = this.plugins.get(pluginName)?.instance;
+    if (!plugin) return { commands: [], cmdHandlers: [] };
+    
+    return {
+      commands: plugin.commands ? Object.keys(plugin.commands) : [],
+      cmdHandlers: plugin.cmdHandlers ? Object.keys(plugin.cmdHandlers) : [],
+    };
+  }
+
   async handleMessage(msg: any): Promise<void> {
     if (!this.client) return;
     if (!msg) return;

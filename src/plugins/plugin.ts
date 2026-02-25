@@ -27,74 +27,36 @@ const pluginPlugin: Plugin = {
           case "ls": {
             const prefix = process.env.CMD_PREFIX || ".";
             
-            // 从 GitHub 远程获取插件列表
-            let remotePlugins: { name: string; description: string }[] = [];
-            try {
-              const repoUrl = "https://api.github.com/repos/Tumblr-code/my-telegram-bot/contents/plugins";
-              const response = await axios.get(repoUrl, { timeout: 10000 });
-              const files = response.data.filter((f: any) => f.name.endsWith(".ts"));
+            // 获取所有已加载的插件
+            const allPlugins = pluginManager.getAllPlugins();
+            
+            // 构建插件和命令列表
+            let text = fmt.bold("📦 已加载插件和命令") + "\n\n";
+            
+            for (const plugin of allPlugins) {
+              const cmds: string[] = [];
               
-              for (const file of files) {
-                const name = file.name.replace(".ts", "");
-                // 获取插件描述（从文件内容中提取）
-                try {
-                  const rawUrl = file.download_url;
-                  const contentResponse = await axios.get(rawUrl, { timeout: 5000 });
-                  const content = contentResponse.data;
-                  // 提取 description
-                  const descMatch = content.match(/description\s*[:=]\s*["']([^"']+)["']/);
-                  const description = descMatch ? descMatch[1] : "暂无描述";
-                  remotePlugins.push({ name, description });
-                } catch {
-                  remotePlugins.push({ name, description: "暂无描述" });
-                }
+              // 收集 commands 中的命令
+              if (plugin.commands) {
+                cmds.push(...Object.keys(plugin.commands));
               }
-            } catch (err) {
-              logger.error("获取远程插件列表失败:", err);
-              // 如果远程获取失败，使用本地列表
-              const pluginsDir = join(process.cwd(), "plugins");
-              if (existsSync(pluginsDir)) {
-                const files = readdirSync(pluginsDir).filter(f => f.endsWith(".ts"));
-                remotePlugins = files.map(f => ({ name: f.replace(".ts", ""), description: "本地插件" }));
+              
+              // 收集 cmdHandlers 中的命令
+              if (plugin.cmdHandlers) {
+                cmds.push(...Object.keys(plugin.cmdHandlers));
+              }
+              
+              // 显示插件信息
+              if (cmds.length > 0) {
+                text += `${fmt.bold(plugin.name)} (${cmds.length}个命令)\n`;
+                text += `  ${fmt.code(cmds.join(", "))}\n\n`;
+              } else {
+                text += `${fmt.bold(plugin.name)}\n`;
+                text += `  (无命令)\n\n`;
               }
             }
             
-            // 获取已启用的插件
-            const enabledPlugins = db.getAllPluginsFromDB().filter(p => p.enabled);
-            const enabledNames = new Set(enabledPlugins.map(p => p.name));
-            
-            let text = fmt.bold("📦 插件列表") + "\n";
-            text += fmt.italic("数据来源: GitHub 远程仓库") + "\n\n";
-            
-            // 已启用的插件
-            if (enabledPlugins.length > 0) {
-              text += fmt.bold("✅ 已启用") + "\n";
-              for (const plugin of enabledPlugins) {
-                text += `  ${fmt.code(plugin.name)}\n`;
-              }
-              text += "\n";
-            }
-            
-            // 可用插件列表（使用 blockquote 折叠显示）
-            if (remotePlugins.length > 0) {
-              text += fmt.bold("📥 可用插件（点击安装）") + "\n";
-              
-              // 构建插件列表文本（用于 blockquote）
-              let pluginListText = "";
-              for (const plugin of remotePlugins) {
-                const status = enabledNames.has(plugin.name) ? "✅ " : "  ";
-                const shortDesc = plugin.description.length > 25 
-                  ? plugin.description.slice(0, 25) + "..." 
-                  : plugin.description;
-                pluginListText += `${status}${plugin.name.padEnd(15)} - ${shortDesc}\n`;
-              }
-              
-              // 使用 blockquote 折叠显示
-              text += `<blockquote expandable>${pluginListText}</blockquote>\n`;
-            }
-            
-            text += `\n总计: ${enabledPlugins.length} 已启用 / ${remotePlugins.length} 可用\n`;
-            text += `使用 ${fmt.code(`${prefix}plugin install <名称>`)} 安装插件`;
+            text += `使用 ${fmt.code(`${prefix}help <命令>`)} 查看详细帮助`;
             
             await ctx.replyHTML(text);
             break;
