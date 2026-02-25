@@ -229,7 +229,7 @@ db.addSudo(userId)           // 添加 sudo 权限
 |------|------|--------|
 | `TELEGRAM_API_ID` | Telegram API ID | 必填 |
 | `TELEGRAM_API_HASH` | Telegram API Hash | 必填 |
-| `OWNER_ID` | 机器人所有者 ID | 7873158072 |
+| `OWNER_ID` | 机器人所有者 ID | 必填 |
 | `CMD_PREFIX` | 命令前缀 | `.` |
 | `LOG_LEVEL` | 日志级别 | `info` |
 | `ENABLE_SHELL_EXEC` | 启用 shell 执行 | `true` |
@@ -263,7 +263,7 @@ nexbot/
 
 ## 🔒 安全
 
-- 仅限配置的 `OWNER_ID` 使用所有命令
+- 仅限配置的 `OWNER_ID` 使用管理命令
 - 危险命令自动拦截（rm -rf / 等）
 - Shell 执行可禁用
 - 命令超时保护
