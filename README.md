@@ -120,6 +120,11 @@ bun run dev
 | **pansou** | `pan` | 网盘搜索（Telegraph 排版） |
 | **privateguard** | `pglist` | 私聊保护（人机验证） |
 | **speedtest** | `speedtest` | 网速测试 |
+| **calc** | `calc` | 科学计算器（支持复杂表达式） |
+| **hitokoto** | `hitokoto` | 随机一言（来自 hitokoto.cn） |
+| **weather** | `weather` | 天气查询（支持全球城市） |
+| **ip** | `ip` | IP/域名查询（地理位置+ISP） |
+| **crazy4** | `crazy4` | 疯狂星期四文案 |
 
 #### AI 插件子命令
 
