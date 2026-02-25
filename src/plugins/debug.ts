@@ -46,13 +46,13 @@ const debugPlugin: Plugin = {
           const peerId = msgAny.peerId;
           if (peerId.userId) {
             chatId = peerId.userId.toString();
-            chatType = "User (Private)";
+            chatType = "User";
           } else if (peerId.channelId) {
             chatId = peerId.channelId.toString();
             chatType = "Channel";
           } else if (peerId.chatId) {
             chatId = peerId.chatId.toString();
-            chatType = "Chat (Group)";
+            chatType = "Chat";
           }
         }
         

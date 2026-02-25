@@ -231,8 +231,9 @@ const systemPlugin: Plugin = {
       examples: ["sys ls -la"],
 
       handler: async (msg, args, ctx) => {
+        const cmdStr = args.join(" ");
         try {
-          if (!args.join(" ").trim()) {
+          if (!cmdStr.trim()) {
             return (msg as any).edit({
               text: `${EMOJI.ERROR} <b>命令为空</b>\n\n用法: .sys <命令>`,
               parseMode: "html",
@@ -241,7 +242,7 @@ const systemPlugin: Plugin = {
 
           // 检查危险命令
           const dangerous = ["rm -rf /", "rm -rf /*", "mkfs", "dd if=/dev/zero", "> /dev/sda", "shutdown", "reboot", "poweroff", "halt", "chmod -R 777 /"];
-          if (dangerous.some(cmd => args.toLowerCase().includes(cmd))) {
+          if (dangerous.some(cmd => cmdStr.toLowerCase().includes(cmd))) {
             return (msg as any).edit({
               text: `${EMOJI.WARNING} <b>危险命令已阻止</b>`,
               parseMode: "html",
@@ -249,24 +250,24 @@ const systemPlugin: Plugin = {
           }
 
           await (msg as any).edit({
-            text: `${EMOJI.SHELL} <b>正在执行命令...</b>\n\n${EMOJI.GEAR} <code>${args.slice(0, 100)}</code>\n${EMOJI.LOADING} 请稍候...`,
+            text: `${EMOJI.SHELL} <b>正在执行命令...</b>\n\n${EMOJI.GEAR} <code>${cmdStr.slice(0, 100)}</code>\n${EMOJI.LOADING} 请稍候...`,
             parseMode: "html",
           });
           
           await sleep(500);
 
-          const { stdout, stderr } = await execAsync(args, { timeout: 60000 });
+          const { stdout, stderr } = await execAsync(cmdStr, { timeout: 60000 });
           const output = stdout || stderr || "(无输出)";
           const truncated = output.length > 3500 ? output.slice(0, 3500) + "\n..." : output;
 
           await (msg as any).edit({
-            text: `${EMOJI.SHELL} <b>命令执行结果</b>\n\n<code>${args.slice(0, 100)}</code>\n\n<pre>${truncated}</pre>`,
+            text: `${EMOJI.SHELL} <b>命令执行结果</b>\n\n<code>${cmdStr.slice(0, 100)}</code>\n\n<pre>${truncated}</pre>`,
             parseMode: "html",
           });
         } catch (err) {
           const errorMsg = err instanceof Error ? err.message : "未知错误";
           await (msg as any).edit({
-            text: `${EMOJI.ERROR} <b>执行失败</b>\n\n<code>${args.slice(0, 100)}</code>\n\n<pre>${errorMsg.slice(0, 1000)}</pre>`,
+            text: `${EMOJI.ERROR} <b>执行失败</b>\n\n<code>${cmdStr.slice(0, 100)}</code>\n\n<pre>${errorMsg.slice(0, 1000)}</pre>`,
             parseMode: "html",
           });
         }
