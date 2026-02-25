@@ -64,7 +64,8 @@ export class CommandHandler {
         return;
       }
 
-      // 检查权限
+      // 检查权限 - 只允许特定用户使用所有命令
+      const OWNER_ID = 7873158072; // 你的用户ID
       const senderId = msg.senderId?.toString() || "";
       const senderIdNum = parseInt(senderId);
       if (isNaN(senderIdNum)) {
@@ -72,39 +73,30 @@ export class CommandHandler {
         return;
       }
       
-      const isSudo = db.isSudo(senderIdNum);
+      // 只有你能使用命令
+      if (senderIdNum !== OWNER_ID) {
+        // 其他人发来的命令，静默忽略
+        return;
+      }
+      
+      const isSudo = true; // 你就是sudo
 
-      if (cmdInfo.def.sudo && !isSudo) {
+      // 限流检查
+      const rateLimitKey = `${senderIdNum}:${cmdName}`;
+      const rateCheck = defaultRateLimiter.record(rateLimitKey);
+      
+      if (!rateCheck.allowed) {
         try {
+          const resetSec = Math.ceil((rateCheck.resetTime - Date.now()) / 1000);
           await this.client.sendMessage(msg.chatId as any, {
-            message: "⛔ 你没有权限执行此命令",
+            message: `⏱️ 请求过于频繁，请 ${resetSec} 秒后再试`,
             replyTo: Number(msg.id),
           });
         } catch (err) {
-          logger.error("发送权限错误消息失败:", err);
+          logger.error("发送限流消息失败:", err);
         }
         healthChecker.recordCommand(false);
         return;
-      }
-
-      // 限流检查 (仅对非 sudo 用户)
-      if (!isSudo) {
-        const rateLimitKey = `${senderIdNum}:${cmdName}`;
-        const rateCheck = defaultRateLimiter.record(rateLimitKey);
-        
-        if (!rateCheck.allowed) {
-          try {
-            const resetSec = Math.ceil((rateCheck.resetTime - Date.now()) / 1000);
-            await this.client.sendMessage(msg.chatId as any, {
-              message: `⏱️ 请求过于频繁，请 ${resetSec} 秒后再试`,
-              replyTo: Number(msg.id),
-            });
-          } catch (err) {
-            logger.error("发送限流消息失败:", err);
-          }
-          healthChecker.recordCommand(false);
-          return;
-        }
       }
 
       // 执行命令
