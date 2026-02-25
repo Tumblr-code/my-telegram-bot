@@ -100,19 +100,30 @@ const pluginPlugin: Plugin = {
               text += `<blockquote expandable>${availableText.trim()}</blockquote>\n\n`;
             }
             
-            // 2. 已安装插件（简洁显示）
-            const allInstalled = [...installedPlugins.map(p => ({ name: p.name, commands: getPluginCmds(p) })), 
-                                  ...installedExternal.map(p => ({ name: p.name, commands: p.commands }))];
+            // 2. 已安装插件 - 分开显示内置和外部
+            const builtinNames = new Set(['help', 'plugin', 'debug', 'sudo', 'exec', 'sysinfo']);
+            const builtinInstalled = installedPlugins.filter(p => builtinNames.has(p.name));
+            const externalInstalled = installedPlugins.filter(p => !builtinNames.has(p.name));
             
-            if (allInstalled.length > 0) {
+            if (externalInstalled.length > 0 || builtinInstalled.length > 0) {
               text += fmt.bold("✅ 已安装") + "\n";
               
               let installedText = "";
-              for (const plugin of allInstalled) {
-                const cmdList = plugin.commands.length > 0 
-                  ? plugin.commands.slice(0, 3).join(" ") + (plugin.commands.length > 3 ? "..." : "")
-                  : "无命令";
+              
+              // 外部插件（带详细命令）
+              for (const plugin of externalInstalled) {
+                const cmds = getPluginCmds(plugin);
+                const cmdList = cmds.length > 0 
+                  ? cmds.slice(0, 4).map(c => fmt.code(c)).join(" ") + (cmds.length > 4 ? " ..." : "")
+                  : fmt.italic("无命令");
                 installedText += `• ${fmt.bold(plugin.name)} — ${cmdList}\n`;
+              }
+              
+              // 内置插件（简单显示）
+              if (builtinInstalled.length > 0) {
+                const builtinCmds = builtinInstalled.flatMap(p => getPluginCmds(p));
+                const builtinList = builtinCmds.slice(0, 6).map(c => fmt.code(c)).join(" ") + (builtinCmds.length > 6 ? " ..." : "");
+                installedText += `• ${fmt.bold("内置")} — ${builtinList}\n`;
               }
               
               text += `<blockquote expandable>${installedText.trim()}</blockquote>\n\n`;
