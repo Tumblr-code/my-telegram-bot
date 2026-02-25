@@ -84,15 +84,18 @@ const pluginPlugin: Plugin = {
               text += `<blockquote expandable>${availableText.trim()}</blockquote>\n\n`;
             }
             
-            // 2. 已安装插件（带折叠）
+            // 2. 已安装插件（带折叠，命令可点击复制）
             if (externalInstalled.length > 0) {
               text += fmt.bold("✅ 已安装插件") + "\n";
               
               let installedText = "";
               for (const plugin of externalInstalled) {
                 const cmds = getPluginCmds(plugin);
-                const cmdStr = cmds.length > 0 ? cmds.join(" ") : "无";
-                installedText += `• ${plugin.name} — ${cmdStr}\n`;
+                // 命令做成可点击复制
+                const cmdLinks = cmds.length > 0 
+                  ? cmds.slice(0, 4).map(c => `<a href="tg://copy?text=${encodeURIComponent(prefix + c)}">${c}</a>`).join(" ")
+                  : "无";
+                installedText += `• ${plugin.name} — ${cmdLinks}\n`;
               }
               
               text += `<blockquote expandable>${installedText.trim()}</blockquote>\n\n`;
