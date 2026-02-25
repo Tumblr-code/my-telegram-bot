@@ -2,6 +2,8 @@
  * 插件基类 - 为 TeleBox 兼容插件提供支持
  */
 import { TelegramClient, Api } from "telegram";
+import { existsSync, mkdirSync } from "fs";
+import { join } from "path";
 
 // 插件接口定义
 export interface PluginConfig {
@@ -39,9 +41,6 @@ export abstract class Plugin {
 
 // 创建目录辅助函数
 export function createDirectoryInAssets(dirName: string): string {
-  const { existsSync, mkdirSync } = require("fs");
-  const { join } = require("path");
-  
   const assetsDir = join(process.cwd(), "data", "assets");
   if (!existsSync(assetsDir)) {
     mkdirSync(assetsDir, { recursive: true });
