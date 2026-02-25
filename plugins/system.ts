@@ -128,8 +128,6 @@ const systemPlugin: Plugin = {
       aliases: ["pull", "gitpull"],
       examples: ["update"],
       handler: async (msg, args, ctx) => {
-        const statusMsg = await ctx.reply(`${EMOJI.LOADING} 正在检查更新...`);
-        
         // 先检查Git状态
         const checkResult = await runCommand("git status");
         if (!checkResult.success) {
@@ -155,7 +153,7 @@ const systemPlugin: Plugin = {
           return;
         }
         
-        // 显示即将更新的内容
+        // 显示即将更新的内容并执行更新
         const commits = logResult.stdout.split("\n").slice(0, 10);
         let updateText = `${EMOJI.UPDATE} <b>发现新版本</b>\n\n`;
         updateText += `<b>更新内容 (${commits.length} 个提交):</b>\n`;
@@ -165,9 +163,6 @@ const systemPlugin: Plugin = {
         if (logResult.stdout.split("\n").length > 10) {
           updateText += `... 还有 ${logResult.stdout.split("\n").length - 10} 个提交\n`;
         }
-        updateText += `\n${EMOJI.LOADING} 正在拉取更新...`;
-        
-        await ctx.replyHTML(updateText);
         
         // 执行更新
         const pullResult = await runCommand(`git pull origin ${branch}`);
@@ -189,8 +184,6 @@ const systemPlugin: Plugin = {
       aliases: ["upgradedeps", "buninstall"],
       examples: ["upgrade"],
       handler: async (msg, args, ctx) => {
-        await ctx.reply(`${EMOJI.LOADING} 正在升级依赖，请稍候...`);
-        
         const result = await runCommand("bun install");
         
         if (!result.success) {
@@ -319,8 +312,6 @@ const systemPlugin: Plugin = {
           }
         }
         
-        await ctx.reply(`${EMOJI.LOADING} 执行命令: ${fmt.code(command)}`);
-        
         const result = await runCommand(command);
         
         let output = result.stdout;
@@ -334,7 +325,7 @@ const systemPlugin: Plugin = {
         
         const status = result.success ? EMOJI.SUCCESS : EMOJI.ERROR;
         await ctx.replyHTML(
-          `${status} <b>执行结果</b>\n\n` +
+          `${status} <b>执行结果</b>  ${fmt.code(command)}\n\n` +
           `<pre>${truncate(output, 3500)}</pre>`
         );
       },
