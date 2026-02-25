@@ -238,9 +238,6 @@ const weatherPlugin: Plugin = {
           let cityName = args.join(" ");
           const originalInput = cityName;
 
-          // 发送加载消息
-          const loadingMsg = await ctx.reply(`${EMOJI.LOADING} 正在查询 <b>${htmlEscape(cityName)}</b> 的天气...`);
-
           // 检查快速映射
           if (quickCityMap[cityName]) {
             cityName = quickCityMap[cityName];
@@ -261,7 +258,6 @@ const weatherPlugin: Plugin = {
           );
 
           if (!geoResponse.data.results || geoResponse.data.results.length === 0) {
-            await ctx.deleteMessage();
             await ctx.replyHTML(
               `${EMOJI.ERROR} <b>城市未找到</b>\n\n` +
               `无法找到城市: <code>${htmlEscape(originalInput)}</code>\n\n` +
@@ -308,7 +304,6 @@ const weatherPlugin: Plugin = {
           const data = weatherResponse.data;
 
           if (!data.current) {
-            await ctx.deleteMessage();
             await ctx.reply(`${EMOJI.ERROR} 无法获取天气数据`);
             return;
           }
@@ -337,7 +332,6 @@ const weatherPlugin: Plugin = {
             }
           }
 
-          await ctx.deleteMessage();
           await ctx.replyHTML(report);
 
         } catch (error: any) {

@@ -83,8 +83,6 @@ const hitokotoPlugin: Plugin = {
           return;
         }
 
-        const loadingMsg = await ctx.reply(`${EMOJI.LOADING} 正在获取一言...`);
-
         let hitokotoData: HitokotoResponse | null = null;
         let retryCount = 0;
         const maxRetries = 3;
@@ -101,7 +99,6 @@ const hitokotoPlugin: Plugin = {
           } catch (error) {
             retryCount++;
             if (retryCount >= maxRetries) {
-              await ctx.deleteMessage();
               await ctx.reply(`${EMOJI.ERROR} 获取一言失败，请稍后重试`);
               return;
             }
@@ -110,7 +107,6 @@ const hitokotoPlugin: Plugin = {
         }
 
         if (!hitokotoData) {
-          await ctx.deleteMessage();
           await ctx.reply(`${EMOJI.ERROR} 无法获取一言数据`);
           return;
         }
@@ -132,7 +128,6 @@ const hitokotoPlugin: Plugin = {
           ? `${EMOJI.QUOTE} ${htmlEscape(hitokotoData.hitokoto)}\n\n${EMOJI.BOOK} ${sourceInfo}`
           : `${EMOJI.QUOTE} ${htmlEscape(hitokotoData.hitokoto)}`;
 
-        await ctx.deleteMessage();
         await ctx.replyHTML(finalText);
       },
     },
