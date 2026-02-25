@@ -74,7 +74,7 @@ const helpPlugin: Plugin = {
         } else {
           // 显示主帮助 - 简约风格
           const botName = process.env.BOT_NAME || "NexBot";
-          const botVersion = process.env.BOT_VERSION || "1.0.0";
+          const botVersion = process.env.BOT_VERSION || "1.0.1";
           const copyCmd = (cmd: string, desc: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(prefix + cmd)}</a> — ${desc}`;
           
           let text = fmt.bold(`🤖 ${botName}`) + ` ${fmt.italic("v" + botVersion)}\n\n`;

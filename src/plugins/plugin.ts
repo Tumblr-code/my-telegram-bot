@@ -92,9 +92,9 @@ const pluginPlugin: Plugin = {
               let installedText = "";
               for (const plugin of externalInstalled) {
                 const cmds = getPluginCmds(plugin);
-                // 命令做成可点击复制的代码格式
+                // 命令做成可点击复制的代码格式（显示全部命令）
                 const cmdLinks = cmds.length > 0 
-                  ? cmds.slice(0, 4).map(c => `<a href="tg://copy?text=${encodeURIComponent(prefix + c)}">${fmt.code(c)}</a>`).join(" ")
+                  ? cmds.map(c => `<a href="tg://copy?text=${encodeURIComponent(prefix + c)}">${fmt.code(c)}</a>`).join(" ")
                   : fmt.italic("无命令");
                 installedText += `• ${plugin.name} — ${cmdLinks}\n`;
               }
