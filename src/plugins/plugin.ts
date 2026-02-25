@@ -70,15 +70,16 @@ const pluginPlugin: Plugin = {
             let text = fmt.bold("🔌 插件中心") + "\n";
             text += `可用: ${availablePlugins.length}个 | 已装: ${externalInstalled.length}个\n\n`;
             
-            // 1. 可安装插件（只显示名称和描述，带折叠）
+            // 1. 可安装插件（带折叠，名称可点击复制安装命令）
             if (notInstalled.length > 0) {
               text += fmt.bold("📥 可安装插件") + "\n";
               
               let availableText = "";
               for (const plugin of notInstalled) {
-                // 插件名称 + 描述（简洁）
-                const shortDesc = plugin.description.split("\n")[0].slice(0, 40);
-                availableText += `• ${plugin.name} — ${shortDesc}${plugin.description.length > 40 ? ".." : ""}\n`;
+                const installCmd = prefix + "plugin install " + plugin.name;
+                const shortDesc = plugin.description.split("\n")[0].slice(0, 35);
+                // 插件名称可点击复制安装命令
+                availableText += `• <a href="tg://copy?text=${encodeURIComponent(installCmd)}">${fmt.code(plugin.name)}</a> — ${shortDesc}${plugin.description.length > 35 ? ".." : ""}\n`;
               }
               
               text += `<blockquote expandable>${availableText.trim()}</blockquote>\n\n`;
@@ -91,17 +92,17 @@ const pluginPlugin: Plugin = {
               let installedText = "";
               for (const plugin of externalInstalled) {
                 const cmds = getPluginCmds(plugin);
-                // 命令做成可点击复制
+                // 命令做成可点击复制的代码格式
                 const cmdLinks = cmds.length > 0 
-                  ? cmds.slice(0, 4).map(c => `<a href="tg://copy?text=${encodeURIComponent(prefix + c)}">${c}</a>`).join(" ")
-                  : "无";
+                  ? cmds.slice(0, 4).map(c => `<a href="tg://copy?text=${encodeURIComponent(prefix + c)}">${fmt.code(c)}</a>`).join(" ")
+                  : fmt.italic("无命令");
                 installedText += `• ${plugin.name} — ${cmdLinks}\n`;
               }
               
               text += `<blockquote expandable>${installedText.trim()}</blockquote>\n\n`;
             }
             
-            text += `💡 发送 ${prefix}plugin install <名称> 安装插件`;
+            text += `💡 点击插件名复制安装命令`;
             
             await ctx.replyHTML(text);
             break;
