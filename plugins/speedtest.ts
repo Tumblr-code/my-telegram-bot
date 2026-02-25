@@ -73,7 +73,7 @@ const speedtestPlugin: Plugin = {
       handler: async (msg, args, ctx) => {
         try {
           // 发送初始消息
-          const status = await ctx.client.sendMessage(msg.chatId, {
+          const status = await ctx.client.sendMessage(msg.chatId!, {
             message: "🔄 正在测试网速，请稍候...",
             replyTo: Number(msg.id),
           });
@@ -81,7 +81,7 @@ const speedtestPlugin: Plugin = {
           const statusId = Number(status.id);
 
           // 测试延迟
-          await ctx.client.editMessage(msg.chatId, {
+          await ctx.client.editMessage(msg.chatId!, {
             message: statusId,
             text: "🔄 正在测试网速，请稍候...\n📶 正在测试延迟...",
           });
@@ -89,7 +89,7 @@ const speedtestPlugin: Plugin = {
           const ping = await testPing();
 
           // 测试下载速度
-          await ctx.client.editMessage(msg.chatId, {
+          await ctx.client.editMessage(msg.chatId!, {
             message: statusId,
             text: "🔄 正在测试网速，请稍候...\n📶 正在测试延迟...\n⬇️ 正在测试下载速度...",
           });
@@ -114,7 +114,7 @@ const speedtestPlugin: Plugin = {
 
           text += `\n<i>测试时间: ${new Date().toLocaleString()}</i>`;
 
-          await ctx.client.editMessage(msg.chatId, {
+          await ctx.client.editMessage(msg.chatId!, {
             message: statusId,
             text,
             parseMode: "html",

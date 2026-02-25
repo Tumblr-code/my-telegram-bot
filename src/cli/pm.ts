@@ -104,7 +104,7 @@ async function installPlugin(name: string): Promise<void> {
       throw new Error("无法获取插件列表");
     }
 
-    const registry = await response.json();
+    const registry = await response.json() as { plugins?: Record<string, any> };
     const plugin = registry.plugins?.[name];
 
     if (!plugin) {
@@ -146,7 +146,7 @@ async function searchPlugins(query?: string): Promise<void> {
       throw new Error("无法获取插件列表");
     }
 
-    const registry = await response.json();
+    const registry = await response.json() as { plugins?: Record<string, any> };
     const plugins = Object.entries(registry.plugins || {});
 
     if (plugins.length === 0) {
@@ -156,7 +156,7 @@ async function searchPlugins(query?: string): Promise<void> {
 
     console.log("🔌 可用插件:\n");
 
-    for (const [name, info]: [string, any]) of plugins) {
+    for (const [name, info] of plugins as [string, any][]) {
       if (!query || name.includes(query) || info.description?.includes(query)) {
         console.log(`${name} v${info.version}`);
         console.log(`  ${info.description}`);

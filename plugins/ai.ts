@@ -87,7 +87,7 @@ class RequestCache {
   set(provider: string, model: string, prompt: string, content: string): void {
     if (this.cache.size >= this.maxSize) {
       const firstKey = this.cache.keys().next().value;
-      this.cache.delete(firstKey);
+      this.cache.delete(firstKey as string);
     }
     const key = this.generateKey(provider, model, prompt);
     this.cache.set(key, { content, timestamp: Date.now(), model, provider });

@@ -42,7 +42,7 @@ class HealthChecker {
   private commandCount: number = 0;
   private commandErrors: number = 0;
   private lastCheck: number = 0;
-  private checkInterval: Timer | null = null;
+  private checkInterval: NodeJS.Timeout | null = null;
 
   startMonitoring(intervalMs: number = 60000): void {
     // 每分钟执行一次健康检查
@@ -82,7 +82,7 @@ class HealthChecker {
       // @ts-ignore - Bun 特有的 API
       if (typeof Bun !== "undefined" && Bun.gc) {
         // Bun 运行时，使用 heapSizeLimit 作为参考
-        total = usage.heapSizeLimit || usage.heapTotal * 2;
+        total = (usage as any).heapSizeLimit || usage.heapTotal * 2;
       } else {
         total = usage.heapTotal;
       }

@@ -57,7 +57,7 @@ const CONFIG = {
 };
 
 // 获取当前验证类型（处理随机情况）
-const getVerifyType = (): "math" => {
+const getVerifyType = (): VerifyType => {
   // 只使用数学验证
   return "math";
 };

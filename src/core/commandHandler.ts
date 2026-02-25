@@ -23,7 +23,7 @@ export class CommandHandler {
     logger.info("命令处理器已启动");
   }
 
-  private async handleMessage(event: NewMessageEvent): Promise<void> {
+  private async handleMessage(event: { message: { message: string; chatId: BigInteger; senderId: BigInteger | undefined; id: number; date: number; replyToMsgId?: number }; }): Promise<void> {
     try {
       const msg = event.message;
       if (!msg) return;
@@ -76,7 +76,7 @@ export class CommandHandler {
 
       if (cmdInfo.def.sudo && !isSudo) {
         try {
-          await this.client.sendMessage(msg.chatId, {
+          await this.client.sendMessage(msg.chatId as any, {
             message: "⛔ 你没有权限执行此命令",
             replyTo: Number(msg.id),
           });
@@ -95,7 +95,7 @@ export class CommandHandler {
         if (!rateCheck.allowed) {
           try {
             const resetSec = Math.ceil((rateCheck.resetTime - Date.now()) / 1000);
-            await this.client.sendMessage(msg.chatId, {
+            await this.client.sendMessage(msg.chatId as any, {
               message: `⏱️ 请求过于频繁，请 ${resetSec} 秒后再试`,
               replyTo: Number(msg.id),
             });
@@ -109,8 +109,8 @@ export class CommandHandler {
 
       // 执行命令
       try {
-        const ctx = createContext(this.client, msg, isSudo);
-        await cmdInfo.def.handler(msg, args, ctx);
+        const ctx = createContext(this.client, msg as any, isSudo);
+        await cmdInfo.def.handler(msg as any, args, ctx);
         
         logger.debug(`命令执行: ${cmdName} [${senderId}]`);
         healthChecker.recordCommand(true);
@@ -120,7 +120,7 @@ export class CommandHandler {
         
         try {
           const errorMsg = err instanceof Error ? err.message : "未知错误";
-          await this.client.sendMessage(msg.chatId, {
+          await this.client.sendMessage(msg.chatId as any, {
             message: `❌ 命令执行出错: ${errorMsg}`,
             replyTo: msg.id,
           });

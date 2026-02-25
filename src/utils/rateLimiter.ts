@@ -21,7 +21,7 @@ class RateLimiter {
   private requests: Map<string, RateLimitEntry> = new Map();
   private blocked: Map<string, number> = new Map();
   private config: RateLimitConfig;
-  private cleanupInterval: Timer | null = null;
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(config: Partial<RateLimitConfig> = {}) {
     this.config = {

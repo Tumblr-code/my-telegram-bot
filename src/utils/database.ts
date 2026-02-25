@@ -1,3 +1,4 @@
+// @ts-ignore - Bun 内置模块
 import { Database } from "bun:sqlite";
 import { existsSync, mkdirSync } from "fs";
 import { dirname } from "path";

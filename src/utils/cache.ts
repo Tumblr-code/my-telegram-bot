@@ -22,7 +22,7 @@ class Cache<T = any> {
   private stats: CacheStats = { hits: 0, misses: 0, size: 0 };
   private maxSize: number;
   private defaultTTL: number;
-  private cleanupInterval: Timer | null = null;
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(options: { maxSize?: number; defaultTTL?: number; cleanupInterval?: number } = {}) {
     this.maxSize = options.maxSize || 1000;
