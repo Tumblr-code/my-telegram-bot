@@ -11,7 +11,7 @@
 | 核心代码 | 1,070 行 |
 | 总代码量 | 1,930 行 |
 | 依赖数量 | 2 个 |
-| 内置插件 | 6 个 |
+| 内置插件 | 5 个 |
 | 开发时间 | 1 天 |
 
 ## 📁 文件结构
@@ -41,7 +41,6 @@ nexbot/
 │   │   │   ├── help.ts               # 帮助系统 (78行)
 │   │   │   ├── plugin.ts             # 插件管理 (95行)
 │   │   │   ├── debug.ts              # 调试工具 (82行)
-│   │   │   ├── sudo.ts               # 权限管理 (89行)
 │   │   │   ├── exec.ts               # Shell执行 (118行)
 │   │   │   └── sysinfo.ts            # 系统信息 (73行)
 │   │   ├── utils/            # 工具函数
@@ -90,12 +89,11 @@ nexbot/
 
 | 插件 | 命令 | 描述 | 权限 |
 |------|------|------|------|
-| help | help, h | 帮助系统 | 所有人 |
-| plugin | plugin, pm | 插件管理 | sudo |
-| debug | id, echo, ping, msg | 调试工具 | 所有人/sudo |
-| sudo | sudo | 权限管理 | sudo |
-| exec | exec, eval | 代码执行 | sudo |
-| sysinfo | sysinfo, uptime, db | 系统信息 | 所有人/sudo |
+| help | help, h, start | 帮助系统 | 所有人 |
+| plugin | plugin, pm, plugins | 插件管理 | sudo |
+| debug | id, chatid, chat, echo, say, ping, pong, msg | 调试工具 | sudo |
+| exec | exec, shell, sh, cmd, eval, js | 代码执行 | sudo |
+| sysinfo | sysinfo, status, stats, info, uptime, up, db, database, health, hc, cache, ratelimit, rl | 系统信息 | sudo |
 
 ## 🛠️ 技术栈
 
@@ -124,13 +122,12 @@ nexbot/
 ├── context.ts:           61 行
 └── system.ts:            62 行
 
-内置插件:     535 行 (28%)
-├── exec.ts:             118 行
+内置插件:     446 行 (23%)
 ├── plugin.ts:            95 行
-├── sudo.ts:              89 行
+├── exec.ts:              95 行
+├── sysinfo.ts:           85 行
 ├── debug.ts:             82 行
-├── help.ts:              78 行
-└── sysinfo.ts:           73 行
+└── help.ts:              89 行
 
 类型定义:     114 行 (6%)
 CLI 工具:     200 行 (10%)
@@ -186,9 +183,9 @@ bun start
 
 ### Sudo 命令
 ```
-.sudo add @user        # 添加 sudo 用户
-.sudo list             # 列出 sudo 用户
 .exec ls -la           # 执行 shell
+.eval 1 + 1            # 执行 JavaScript
+.sysinfo               # 系统信息
 ```
 
 ### CLI 工具

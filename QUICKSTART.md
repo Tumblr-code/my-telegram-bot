@@ -65,15 +65,15 @@ bun start
 
 ## 下一步
 
-### 添加 Sudo 用户
+### 获取你的用户 ID
+
+在 Telegram 中:
 
 ```
-.sudo add 你的用户ID
+.id
 ```
 
-获取用户 ID:
-- 私聊 [@userinfobot](https://t.me/userinfobot)
-- 或使用 `.id` 命令
+获取的用户 ID 可用于配置环境变量 `SUDO_USERS`。
 
 ### 创建第一个插件
 
@@ -121,7 +121,7 @@ export default myPlugin;
 # 系统信息
 .sysinfo
 
-# Shell 执行 (需要 sudo)
+# Shell 执行 (仅限 OWNER)
 .exec ls -la
 
 # 插件管理

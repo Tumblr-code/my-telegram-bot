@@ -311,7 +311,7 @@ const CONFIG = {
 
 **文件**: `plugins/hitokoto.ts`
 
-**命令**: `hitokoto`, `yiyan`, `quote`
+**命令**: `hitokoto`, `yiyan`, `yy`, `一言`
 
 **功能**: 从 hitokoto.cn API 获取随机一言，支持多种类型（动画、漫画、文学、哲学等）。
 
@@ -338,7 +338,7 @@ const CONFIG = {
 
 **文件**: `plugins/weather.ts`
 
-**命令**: `weather`, `tianqi`, `tq`
+**命令**: `weather`, `wt`, `tq`, `天气`
 
 **功能**: 查询全球城市天气信息，使用 Open-Meteo 免费 API，支持中英文城市名。
 
@@ -446,20 +446,20 @@ const CONFIG = {
 
 **文件**: `plugins/system.ts`
 
-**命令**: `update`, `upgrade`, `restart`, `status`, `logs`, `sys`
+**命令**: `update` (up), `upgrade` (upg), `restart` (reboot), `status` (stat), `logs` (log), `sys` (exec, shell)
 
 **功能**: 系统管理命令，包括更新代码、升级依赖、重启Bot、查看状态/日志等。
 
 **命令说明**:
 
-| 命令 | 描述 | 示例 |
-|------|------|------|
-| `update` / `pull` | 从GitHub拉取最新代码 | `.update` |
-| `upgrade` | 升级项目依赖（bun install） | `.upgrade` |
-| `restart` / `reboot` | 重启Bot | `.restart` |
-| `status` | 查看系统状态（Git/版本/运行时间） | `.status` |
-| `logs [行数]` | 查看日志（默认30行，10-100） | `.logs 50` |
-| `sys <命令>` | 执行系统命令（有安全检查） | `.sys ps aux` |
+| 命令 | 别名 | 描述 | 示例 |
+|------|------|------|------|
+| `update` | `up` | 从GitHub拉取最新代码 | `.update` |
+| `upgrade` | `upg` | 升级项目依赖（bun install） | `.upgrade` |
+| `restart` | `reboot` | 重启Bot | `.restart` |
+| `status` | `stat` | 查看系统状态（Git/版本/运行时间） | `.status` |
+| `logs` | `log` | 查看日志（默认30行，10-100） | `.logs 50` |
+| `sys` | `exec`, `shell` | 执行系统命令（有安全检查） | `.sys ps aux` |
 
 **status 显示内容**:
 - Git 分支和提交信息

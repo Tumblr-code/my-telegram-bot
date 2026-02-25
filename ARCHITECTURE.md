@@ -174,7 +174,6 @@ nexbot/
 │   │   ├── help.ts               # 帮助系统
 │   │   ├── plugin.ts             # 插件管理
 │   │   ├── debug.ts              # 调试工具
-│   │   ├── sudo.ts               # 权限管理
 │   │   ├── exec.ts               # Shell 执行
 │   │   └── sysinfo.ts            # 系统信息
 │   ├── utils/          # 工具函数
