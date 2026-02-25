@@ -83,14 +83,37 @@ const helpPlugin: Plugin = {
           text += "⚡ 极速 · 🔌 插件化 · 🛡️ 安全\n";
           text += `前缀 ${fmt.code(prefix)} · 帮助 ${copyCmd("help <命令>", "详情")}\n\n`;
           
+          // 获取已安装插件（排除内置插件）
+          const builtinNames = new Set(['help', 'plugin', 'debug', 'sudo', 'exec', 'sysinfo']);
+          const installedPlugins = pluginManager.getAllPlugins().filter(p => !builtinNames.has(p.name));
+          
           // 分类命令列表
           let commandsText = "";
           commandsText += fmt.bold("基础") + "\n";
           commandsText += `${copyCmd("ping", "延迟")} ${copyCmd("id", "信息")} ${copyCmd("echo", "回声")}\n\n`;
           commandsText += fmt.bold("系统") + "\n";
           commandsText += `${copyCmd("sysinfo", "状态")} ${copyCmd("health", "健康")} ${copyCmd("db", "数据")}\n\n`;
+          
+          // 扩展插件 - 显示已安装的插件
           commandsText += fmt.bold("扩展") + "\n";
-          commandsText += `${copyCmd("ai", "AI对话")} ${copyCmd("pan", "网盘")} ${copyCmd("plugin list", "插件")}`;
+          if (installedPlugins.length > 0) {
+            for (const plugin of installedPlugins) {
+              // 获取插件的命令
+              const cmds: string[] = [];
+              if (plugin.commands) cmds.push(...Object.keys(plugin.commands));
+              if (plugin.cmdHandlers) cmds.push(...Object.keys(plugin.cmdHandlers));
+              
+              // 取第一个命令作为代表
+              const mainCmd = cmds[0] || plugin.name;
+              const shortDesc = plugin.description?.split('\n')[0]?.slice(0, 12) || '插件';
+              
+              commandsText += `${copyCmd(mainCmd, shortDesc)} `;
+            }
+            // 添加 plugin list
+            commandsText += `${copyCmd("plugin list", "管理")}`;
+          } else {
+            commandsText += `${copyCmd("plugin list", "查看可用插件")}`;
+          }
           
           text += `<blockquote expandable>${commandsText}</blockquote>`;
           
