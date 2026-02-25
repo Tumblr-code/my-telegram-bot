@@ -1,6 +1,26 @@
 import { Plugin } from "../types/index.js";
 import { fmt } from "../utils/context.js";
 
+// 应用Emoji表情
+const EMOJI = {
+  ID: "🆔",
+  CHAT: "💬",
+  TYPE: "📋",
+  TITLE: "📌",
+  USERNAME: "👤",
+  SENDER: "📨",
+  USER: "👤",
+  NAME: "🏷️",
+  MESSAGE: "💬",
+  DATE: "📅",
+  ECHO: "📢",
+  WAVE: "👋",
+  PING: "🏓",
+  DATA: "📊",
+  CODE: "💻",
+  ARROW: "→",
+};
+
 const debugPlugin: Plugin = {
   name: "debug",
   version: "1.0.0",
@@ -16,19 +36,19 @@ const debugPlugin: Plugin = {
         // 修复：使用 senderId 或 fromId 获取发送者ID，而不是不存在的 sender 属性
         const senderId = (msg as any).senderId || (msg as any).fromId;
         
-        let text = fmt.bold("🆔 聊天信息") + "\n\n";
-        text += fmt.bold("聊天 ID:") + " " + (chat?.id?.toString() || "N/A") + "\n";
-        text += fmt.bold("聊天类型:") + " " + (chat?.className || "N/A") + "\n";
+        let text = fmt.bold(`${EMOJI.ID} 聊天信息`) + "\n\n";
+        text += fmt.bold(`${EMOJI.ID} 聊天 ID:`) + " " + (chat?.id?.toString() || "N/A") + "\n";
+        text += fmt.bold(`${EMOJI.TYPE} 聊天类型:`) + " " + (chat?.className || "N/A") + "\n";
         
         if ((chat as any)?.title) {
-          text += fmt.bold("标题:") + " " + (chat as any).title + "\n";
+          text += fmt.bold(`${EMOJI.TITLE} 标题:`) + " " + (chat as any).title + "\n";
         }
         if ((chat as any)?.username) {
-          text += fmt.bold("用户名:") + " @" + (chat as any).username + "\n";
+          text += fmt.bold(`${EMOJI.USERNAME} 用户名:`) + " @" + (chat as any).username + "\n";
         }
         
-        text += "\n" + fmt.bold("发送者信息") + "\n";
-        text += fmt.bold("用户 ID:") + " " + (senderId?.toString() || "N/A") + "\n";
+        text += "\n" + fmt.bold(`${EMOJI.SENDER} 发送者信息`) + "\n";
+        text += fmt.bold(`${EMOJI.ID} 用户 ID:`) + " " + (senderId?.toString() || "N/A") + "\n";
         
         // 尝试从其他属性获取用户信息
         const msgAny = msg as any;
@@ -37,17 +57,17 @@ const debugPlugin: Plugin = {
         if (sender?.firstName || (sender as any)?.firstName) {
           const firstName = sender.firstName || (sender as any).firstName;
           const lastName = sender.lastName || (sender as any).lastName || "";
-          text += fmt.bold("名称:") + " " + firstName + (lastName ? " " + lastName : "") + "\n";
+          text += fmt.bold(`${EMOJI.NAME} 名称:`) + " " + firstName + (lastName ? " " + lastName : "") + "\n";
         }
         if (sender?.username || (sender as any)?.username) {
-          text += fmt.bold("用户名:") + " @" + (sender.username || (sender as any).username) + "\n";
+          text += fmt.bold(`${EMOJI.USERNAME} 用户名:`) + " @" + (sender.username || (sender as any).username) + "\n";
         }
         
-        text += "\n" + fmt.bold("消息信息") + "\n";
-        text += fmt.bold("消息 ID:") + " " + msg.id + "\n";
+        text += "\n" + fmt.bold(`${EMOJI.MESSAGE} 消息信息`) + "\n";
+        text += fmt.bold(`${EMOJI.ID} 消息 ID:`) + " " + msg.id + "\n";
         // 修复：添加空值检查
         const dateStr = msg.date ? new Date(msg.date * 1000).toLocaleString() : "N/A";
-        text += fmt.bold("日期:") + " " + dateStr + "\n";
+        text += fmt.bold(`${EMOJI.DATE} 日期:`) + " " + dateStr + "\n";
 
         await ctx.replyHTML(text);
       },
@@ -58,8 +78,8 @@ const debugPlugin: Plugin = {
       aliases: ["say"],
       examples: ["echo Hello World"],
       handler: async (msg, args, ctx) => {
-        const text = args.join(" ") || "👋 Hello from NexBot!";
-        await ctx.reply(text);
+        const text = args.join(" ") || `${EMOJI.WAVE} Hello from NexBot!`;
+        await ctx.reply(`${EMOJI.ECHO} ${text}`);
       },
     },
 
@@ -68,9 +88,9 @@ const debugPlugin: Plugin = {
       aliases: ["pong"],
       handler: async (msg, args, ctx) => {
         const start = Date.now();
-        const reply = await ctx.reply("🏓 Pong!");
+        const reply = await ctx.reply(`${EMOJI.PING} Pong!`);
         const latency = Date.now() - start;
-        await ctx.replyHTML(fmt.bold("🏓 Pong!") + "\n响应时间: " + latency + "ms");
+        await ctx.replyHTML(fmt.bold(`${EMOJI.PING} Pong!`) + "\n响应时间: " + latency + "ms");
       },
     },
 

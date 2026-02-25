@@ -3,6 +3,24 @@ import { fmt } from "../utils/context.js";
 import { logger } from "../utils/logger.js";
 import { spawn } from "child_process";
 
+// 应用Emoji表情
+const EMOJI = {
+  COMPUTER: "💻",
+  CODE: "📟",
+  DISABLED: "🚫",
+  QUESTION: "❓",
+  DANGER: "⚠️",
+  BLOCK: "🚫",
+  RUNNING: "🔄",
+  SUCCESS: "✅",
+  ERROR: "❌",
+  OUTPUT: "📤",
+  ERROR_OUTPUT: "⚠️",
+  COMMAND: "⌨️",
+  EXIT_CODE: "🔢",
+  ARROW: "→",
+};
+
 const execPlugin: Plugin = {
   name: "exec",
   version: "1.0.0",
@@ -17,13 +35,13 @@ const execPlugin: Plugin = {
       examples: ["exec ls -la", "exec pwd"],
       handler: async (msg, args, ctx) => {
         if (!process.env.ENABLE_SHELL_EXEC) {
-          await ctx.reply("❌ Shell 执行已禁用");
+          await ctx.reply(`${EMOJI.DISABLED} Shell 执行已禁用`);
           return;
         }
 
         const command = args.join(" ").trim();
         if (!command) {
-          await ctx.reply("❓ 请提供要执行的命令");
+          await ctx.reply(`${EMOJI.QUESTION} 请提供要执行的命令`);
           return;
         }
 
@@ -39,7 +57,7 @@ const execPlugin: Plugin = {
         
         for (const dangerous of dangerousCommands) {
           if (command.includes(dangerous)) {
-            await ctx.reply("🚫 检测到危险命令，已阻止执行");
+            await ctx.reply(`${EMOJI.DANGER} 检测到危险命令，已阻止执行`);
             logger.warn(`阻止危险命令: ${command}`);
             return;
           }
@@ -48,14 +66,14 @@ const execPlugin: Plugin = {
         const timeout = parseInt(process.env.SHELL_TIMEOUT || "30000");
         const maxOutput = parseInt(process.env.MAX_OUTPUT_LENGTH || "4000");
 
-        await ctx.reply(`🔄 执行中: ${fmt.code(command)}`);
+        await ctx.reply(`${EMOJI.RUNNING} 执行中: ${fmt.code(command)}`);
 
         try {
           const result = await executeCommand(command, timeout);
           
           let output = result.stdout || "(无输出)";
           if (result.stderr) {
-            output += "\n\n" + fmt.bold("错误输出:") + "\n" + result.stderr;
+            output += "\n\n" + fmt.bold(`${EMOJI.ERROR_OUTPUT} 错误输出:`) + "\n" + result.stderr;
           }
 
           // 截断长输出
@@ -63,14 +81,14 @@ const execPlugin: Plugin = {
             output = output.slice(0, maxOutput) + "\n... (输出已截断)";
           }
 
-          const text = fmt.bold("💻 执行结果") + "\n\n" +
-            fmt.bold("命令:") + " " + fmt.code(command) + "\n" +
-            fmt.bold("退出码:") + " " + result.code + "\n\n" +
+          const text = fmt.bold(`${EMOJI.COMPUTER} 执行结果`) + "\n\n" +
+            fmt.bold(`${EMOJI.COMMAND} 命令:`) + " " + fmt.code(command) + "\n" +
+            fmt.bold(`${EMOJI.EXIT_CODE} 退出码:`) + " " + result.code + "\n\n" +
             fmt.pre(output);
 
           await ctx.replyHTML(text);
         } catch (err) {
-          await ctx.reply(`❌ 执行失败: ${err instanceof Error ? err.message : "未知错误"}`);
+          await ctx.reply(`${EMOJI.ERROR} 执行失败: ${err instanceof Error ? err.message : "未知错误"}`);
         }
       },
     },
@@ -83,7 +101,7 @@ const execPlugin: Plugin = {
       handler: async (msg, args, ctx) => {
         const code = args.join(" ").trim();
         if (!code) {
-          await ctx.reply("❓ 请提供要执行的代码");
+          await ctx.reply(`${EMOJI.QUESTION} 请提供要执行的代码`);
           return;
         }
 
@@ -97,9 +115,9 @@ const execPlugin: Plugin = {
             output = output.slice(0, 4000) + "\n... (已截断)";
           }
 
-          await ctx.replyHTML(fmt.bold("📟 执行结果") + "\n\n" + fmt.pre(output));
+          await ctx.replyHTML(fmt.bold(`${EMOJI.CODE} 执行结果`) + "\n\n" + fmt.pre(output));
         } catch (err) {
-          await ctx.reply(`❌ 执行错误: ${err instanceof Error ? err.message : "未知错误"}`);
+          await ctx.reply(`${EMOJI.ERROR} 执行错误: ${err instanceof Error ? err.message : "未知错误"}`);
         }
       },
     },

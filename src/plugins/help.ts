@@ -4,6 +4,27 @@ import { fmt, escapeHTML } from "../utils/context.js";
 import { VERSION } from "../utils/version.js";
 import { cleanPluginDescription } from "../utils/helpers.js";
 
+// 应用Emoji表情
+const EMOJI = {
+  BOT: "🤖",
+  VERSION: "🏷️",
+  SPEED: "⚡",
+  PLUGIN: "🔌",
+  SHIELD: "🛡️",
+  UNKNOWN: "❓",
+  BOOK: "📖",
+  INFO: "ℹ️",
+  COMMAND: "⌨️",
+  ALIAS: "🏷️",
+  EXAMPLE: "📋",
+  BASIC: "🎯",
+  SYSTEM: "⚙️",
+  EXTEND: "🧩",
+  MANAGE: "🎛️",
+  ARROW: "→",
+  DOT: "•",
+};
+
 const helpPlugin: Plugin = {
   name: "help",
   version: "1.0.0",
@@ -24,7 +45,7 @@ const helpPlugin: Plugin = {
           const cmdInfo = pluginManager.getCommand(cmdName);
           
           if (!cmdInfo) {
-            await ctx.reply("❓ 未知命令: " + cmdName);
+            await ctx.reply(`${EMOJI.UNKNOWN} 未知命令: ${cmdName}`);
             return;
           }
 
@@ -35,53 +56,53 @@ const helpPlugin: Plugin = {
           // 构建详细信息（放入折叠块）
           let detailText = "";
           
-          detailText += "描述: " + escapeHTML(def.description) + "\n";
-          detailText += "来源插件: " + cmdInfo.plugin + "\n";
+          detailText += `${EMOJI.INFO} 描述: ${escapeHTML(def.description)}\n`;
+          detailText += `${EMOJI.PLUGIN} 来源插件: ${cmdInfo.plugin}\n`;
           
           // 如果命令来自 cmdHandlers，显示更详细的信息
           if (isFromCmdHandlers && plugin) {
-            detailText += "\n📋 该插件支持以下命令:\n";
+            detailText += `\n${EMOJI.COMMAND} 该插件支持以下命令:\n`;
             const pluginCmds = pluginManager.getPluginCommands(cmdInfo.plugin);
             
             if (pluginCmds.cmdHandlers.length > 0) {
-              detailText += "管理命令: " + pluginCmds.cmdHandlers.join(", ") + "\n";
+              detailText += `${EMOJI.DOT} 管理命令: ${pluginCmds.cmdHandlers.join(", ")}\n`;
             }
             if (pluginCmds.commands.length > 0) {
-              detailText += "普通命令: " + pluginCmds.commands.join(", ") + "\n";
+              detailText += `${EMOJI.DOT} 普通命令: ${pluginCmds.commands.join(", ")}\n`;
             }
             
             // 显示插件描述
             if (plugin.description) {
-              detailText += "\n插件说明:\n";
+              detailText += `\n${EMOJI.INFO} 插件说明:\n`;
               detailText += escapeHTML(plugin.description) + "\n";
             }
           }
           
           if (def.aliases && def.aliases.length > 0) {
-            detailText += "\n别名: " + def.aliases.join(", ") + "\n";
+            detailText += `\n${EMOJI.ALIAS} 别名: ${def.aliases.join(", ")}\n`;
           }
           
           if (def.examples && def.examples.length > 0) {
-            detailText += "\n示例:\n";
+            detailText += `\n${EMOJI.EXAMPLE} 示例:\n`;
             for (const ex of def.examples) {
-              detailText += "  " + prefix + ex + "\n";
+              detailText += `  ${EMOJI.ARROW} ${prefix + ex}\n`;
             }
           }
           
           // 构建最终消息
-          let text = fmt.bold("📖 命令帮助: " + cmdName) + "\n\n";
+          let text = fmt.bold(`${EMOJI.BOOK} 命令帮助: ${cmdName}`) + "\n\n";
           text += `<blockquote expandable>${detailText.trim()}</blockquote>`;
 
           await ctx.replyHTML(text);
         } else {
           // 显示主帮助 - 简约风格
           const botName = process.env.BOT_NAME || "NexBot";
-          const copyCmd = (cmd: string, desc: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(prefix + cmd)}</a> — ${desc}`;
+          const copyCmd = (cmd: string, desc: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(prefix + cmd)}</a> ${EMOJI.ARROW} ${desc}`;
           
-          let text = fmt.bold(`🤖 ${botName}`) + ` ${fmt.italic("v" + VERSION)}\n\n`;
+          let text = fmt.bold(`${EMOJI.BOT} ${botName}`) + ` ${EMOJI.VERSION} ${fmt.italic("v" + VERSION)}\n\n`;
           
           // 简约介绍
-          text += "⚡ 极速 · 🔌 插件化 · 🛡️ 安全\n";
+          text += `${EMOJI.SPEED} 极速 · ${EMOJI.PLUGIN} 插件化 · ${EMOJI.SHIELD} 安全\n`;
           text += `前缀 ${fmt.code(prefix)} · 帮助 ${copyCmd("help <命令>", "详情")}\n\n`;
           
           // 获取已安装插件（排除内置插件）
@@ -90,13 +111,13 @@ const helpPlugin: Plugin = {
           
           // 分类命令列表
           let commandsText = "";
-          commandsText += fmt.bold("基础") + "\n";
+          commandsText += fmt.bold(`${EMOJI.BASIC} 基础`) + "\n";
           commandsText += `${copyCmd("ping", "延迟")} ${copyCmd("id", "信息")} ${copyCmd("echo", "回声")}\n\n`;
-          commandsText += fmt.bold("系统") + "\n";
+          commandsText += fmt.bold(`${EMOJI.SYSTEM} 系统`) + "\n";
           commandsText += `${copyCmd("sysinfo", "状态")} ${copyCmd("health", "健康")} ${copyCmd("db", "数据")}\n\n`;
           
           // 扩展插件 - 显示已安装的插件
-          commandsText += fmt.bold("扩展") + "\n";
+          commandsText += fmt.bold(`${EMOJI.EXTEND} 扩展`) + "\n";
           if (installedPlugins.length > 0) {
             for (const plugin of installedPlugins) {
               // 获取插件的命令
