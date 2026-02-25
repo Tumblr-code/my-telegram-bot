@@ -105,14 +105,13 @@ const helpPlugin: Plugin = {
               
               // 取第一个命令作为代表
               const mainCmd = cmds[0] || plugin.name;
-              // 转义 HTML 特殊字符，并清理描述（移除 emoji 和过长内容）
+              // 转义 HTML 特殊字符，并清理描述
               let rawDesc = plugin.description?.split('\n')[0] || '插件';
-              // 移除开头的 emoji
-              rawDesc = rawDesc.replace(/^[\p{Emoji}\s]+/u, '').trim();
-              // 限制长度
-              if (rawDesc.length > 10) {
-                rawDesc = rawDesc.slice(0, 10) + '..';
-              }
+              // 移除开头的 emoji 和特殊字符
+              rawDesc = rawDesc.replace(/^[\p{Emoji}\p{P}\s]+/u, '').trim();
+              // 只取第一个词或前6个字符
+              const firstWord = rawDesc.split(/[\s\(\（]/)[0];
+              rawDesc = firstWord.length > 6 ? firstWord.slice(0, 6) : firstWord;
               const shortDesc = escapeHTML(rawDesc);
               
               commandsText += `${copyCmd(mainCmd, shortDesc)} `;
