@@ -85,7 +85,7 @@ const helpPlugin: Plugin = {
           text += `前缀 ${fmt.code(prefix)} · 帮助 ${copyCmd("help <命令>", "详情")}\n\n`;
           
           // 获取已安装插件（排除内置插件）
-          const builtinNames = new Set(['help', 'plugin', 'debug', 'sudo', 'exec', 'sysinfo']);
+          const builtinNames = new Set(['help', 'plugin', 'debug', 'exec', 'sysinfo']);
           const installedPlugins = pluginManager.getAllPlugins().filter(p => !builtinNames.has(p.name));
           
           // 分类命令列表

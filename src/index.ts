@@ -44,22 +44,6 @@ async function main() {
 
     logger.info("✅ NexBot 已启动");
     logger.info(`命令前缀: ${process.env.NODE_ENV === "development" ? "!" : process.env.CMD_PREFIX || "."}`);
-    
-    // 从环境变量读取 SUDO_USERS 并添加到数据库
-    const envSudoUsers = process.env.SUDO_USERS?.split(",").map(id => parseInt(id.trim())).filter(id => !isNaN(id)) || [];
-    for (const userId of envSudoUsers) {
-      if (!db.isSudo(userId)) {
-        db.addSudo(userId);
-      }
-    }
-    
-    // 显示 sudo 用户
-    const sudoList = db.getSudoList();
-    if (sudoList.length > 0) {
-      logger.info(`管理员: ${sudoList.join(", ")}`);
-    } else {
-      logger.warn("⚠️ 没有配置管理员 (SUDO_USERS)");
-    }
 
     // 优雅退出
     process.on("SIGINT", async () => {

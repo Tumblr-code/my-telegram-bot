@@ -64,7 +64,7 @@ const pluginPlugin: Plugin = {
             const installedPlugins = pluginManager.getAllPlugins();
             const notInstalled = availablePlugins.filter(p => !p.installed);
             const externalInstalled = installedPlugins.filter(p => 
-              !['help', 'plugin', 'debug', 'sudo', 'exec', 'sysinfo'].includes(p.name)
+              !['help', 'plugin', 'debug', 'exec', 'sysinfo'].includes(p.name)
             );
             
             // 构建消息

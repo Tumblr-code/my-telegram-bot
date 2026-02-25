@@ -63,11 +63,9 @@ const sysinfoPlugin: Plugin = {
       sudo: true,
       aliases: ["database"],
       handler: async (msg, args, ctx) => {
-        const sudoCount = db.getSudoList().length;
         const aliases = Object.keys(db.getAllAliases()).length;
 
         let text = fmt.bold("💾 数据库") + "\n\n";
-        text += `👑 ${sudoCount} 管理员\n`;
         text += `🏷️ ${aliases} 别名`;
 
         await ctx.replyHTML(text);
