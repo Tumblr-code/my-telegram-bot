@@ -155,8 +155,8 @@ JSON:          100 行 (配置)
 curl -fsSL https://bun.sh/install | bash
 
 # 2. 下载项目
-git clone https://github.com/Tumblr-code/my-telegram-bot.git
-cd my-telegram-bot
+git clone https://github.com/Tumblr-code/NexBot.git
+cd NexBot
 bun install
 
 # 3. 配置

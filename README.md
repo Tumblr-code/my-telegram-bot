@@ -1,6 +1,6 @@
 # 🤖 NexBot
 
-[![CI](https://github.com/Tumblr-code/my-telegram-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/Tumblr-code/my-telegram-bot/actions)
+[![CI](https://github.com/Tumblr-code/NexBot/actions/workflows/ci.yml/badge.svg)](https://github.com/Tumblr-code/NexBot/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/TypeScript-%23007ACC.svg?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -39,8 +39,8 @@ curl -fsSL https://bun.sh/install | bash
 ### 2. 克隆项目
 
 ```bash
-git clone https://github.com/Tumblr-code/my-telegram-bot.git
-cd my-telegram-bot
+git clone https://github.com/Tumblr-code/NexBot.git
+cd NexBot
 ```
 
 ### 3. 安装依赖

@@ -1,7 +1,7 @@
 #!/bin/bash
 # 同步本地修复到 GitHub（自动递增版本号）
 
-cd /root/my-telegram-bot
+cd /root/NexBot
 
 # 检查是否有更改
 if git diff --quiet && git diff --cached --quiet; then

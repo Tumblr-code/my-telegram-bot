@@ -30,15 +30,15 @@ bun --version
 
 **方式一: 克隆仓库**
 ```bash
-git clone https://github.com/Tumblr-code/my-telegram-bot.git
-cd my-telegram-bot
+git clone https://github.com/Tumblr-code/NexBot.git
+cd NexBot
 ```
 
 **方式二: 下载压缩包**
 ```bash
-wget https://github.com/Tumblr-code/my-telegram-bot/archive/main.zip
+wget https://github.com/Tumblr-code/NexBot/archive/main.zip
 unzip main.zip
-cd my-telegram-bot-main
+cd NexBot-main
 ```
 
 ### 3. 安装依赖
@@ -225,4 +225,4 @@ rm -rf ~/.local/share/nexbot
 
 ## 获取帮助
 
-- GitHub Issues: [github.com/Tumblr-code/my-telegram-bot/issues](https://github.com/Tumblr-code/my-telegram-bot/issues)
+- GitHub Issues: [github.com/Tumblr-code/NexBot/issues](https://github.com/Tumblr-code/NexBot/issues)

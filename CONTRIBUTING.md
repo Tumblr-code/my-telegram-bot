@@ -42,8 +42,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/Tumblr-code/my-telegram-bot.git
-cd my-telegram-bot
+git clone https://github.com/Tumblr-code/NexBot.git
+cd NexBot
 
 # 安装依赖
 bun install
@@ -163,6 +163,6 @@ docs(readme): update install guide
 
 ## 联系方式
 
-- GitHub Issues: [github.com/Tumblr-code/my-telegram-bot/issues](https://github.com/Tumblr-code/my-telegram-bot/issues)
+- GitHub Issues: [github.com/Tumblr-code/NexBot/issues](https://github.com/Tumblr-code/NexBot/issues)
 
 感谢你的贡献！🎉

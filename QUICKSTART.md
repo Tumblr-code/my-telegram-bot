@@ -16,8 +16,8 @@ bun --version  # 应显示 1.2.0 或更高
 ## 2. 下载 NexBot (30 秒)
 
 ```bash
-git clone https://github.com/Tumblr-code/my-telegram-bot.git
-cd my-telegram-bot
+git clone https://github.com/Tumblr-code/NexBot.git
+cd NexBot
 bun install
 ```
 
