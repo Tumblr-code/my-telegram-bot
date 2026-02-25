@@ -30,7 +30,9 @@ const pluginPlugin: Plugin = {
             // 获取所有已加载的插件
             const allPlugins = pluginManager.getAllPlugins();
             
-            // 构建插件列表内容（放入折叠块）
+            // 构建插件列表内容（放入折叠块，命令可点击复制）
+            const copyCmd = (cmd: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(cmd)}</a>`;
+            
             let pluginListText = "";
             
             for (const plugin of allPlugins) {
@@ -49,7 +51,7 @@ const pluginPlugin: Plugin = {
               // 显示插件信息
               if (cmds.length > 0) {
                 pluginListText += `${plugin.name} (${cmds.length}个命令)\n`;
-                pluginListText += `  ${cmds.join(", ")}\n\n`;
+                pluginListText += `  ${cmds.map(copyCmd).join(" ")}\n\n`;
               } else {
                 pluginListText += `${plugin.name}\n`;
                 pluginListText += `  (无命令)\n\n`;
@@ -209,13 +211,15 @@ const pluginPlugin: Plugin = {
 
           default: {
             const prefix = process.env.CMD_PREFIX || ".";
+            const copyCmd = (cmd: string, desc: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(prefix + cmd)}</a> - ${desc}`;
+            
             let text = fmt.bold("🔌 插件管理") + "\n\n";
-            text += fmt.code(prefix + "plugin list") + " - 列出所有插件\n";
-            text += fmt.code(prefix + "plugin install <名称>") + " - 安装插件\n";
-            text += fmt.code(prefix + "plugin remove <名称>") + " - 卸载插件\n";
-            text += fmt.code(prefix + "plugin reload <name>") + " - 重载指定插件\n";
-            text += fmt.code(prefix + "plugin reloadall") + " - 重载所有插件\n";
-            text += fmt.code(prefix + "plugin alias") + " - 查看别名列表";
+            text += copyCmd("plugin list", "列出所有插件") + "\n";
+            text += copyCmd("plugin install <名称>", "安装插件") + "\n";
+            text += copyCmd("plugin remove <名称>", "卸载插件") + "\n";
+            text += copyCmd("plugin reload <name>", "重载指定插件") + "\n";
+            text += copyCmd("plugin reloadall", "重载所有插件") + "\n";
+            text += copyCmd("plugin alias", "查看别名列表");
             await ctx.replyHTML(text);
           }
         }

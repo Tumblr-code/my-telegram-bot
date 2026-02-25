@@ -85,25 +85,27 @@ const helpPlugin: Plugin = {
           text += "前缀: " + fmt.code(prefix) + "\n";
           text += "使用 " + fmt.code(prefix + "help <命令>") + " 查看详细帮助\n\n";
           
-          // 常用命令列表（放入折叠块）
+          // 常用命令列表（放入折叠块，可点击复制）
+          const copyCmd = (cmd: string, desc: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(prefix + cmd)}</a> - ${desc}`;
+          
           let commandsText = "";
-          commandsText += "help - 显示帮助\n";
-          commandsText += "ping - 测试延迟\n";
-          commandsText += "id - 获取聊天信息\n";
-          commandsText += "echo - 回声测试\n\n";
+          commandsText += copyCmd("help", "显示帮助") + "\n";
+          commandsText += copyCmd("ping", "测试延迟") + "\n";
+          commandsText += copyCmd("id", "获取聊天信息") + "\n";
+          commandsText += copyCmd("echo", "回声测试") + "\n\n";
           
           commandsText += "📊 系统信息:\n";
-          commandsText += "  sysinfo - 系统状态\n";
-          commandsText += "  uptime - 运行时间\n";
-          commandsText += "  health - 健康检查\n";
-          commandsText += "  db - 数据库统计\n";
-          commandsText += "  cache - 缓存统计\n";
-          commandsText += "  ratelimit - 限流统计\n\n";
+          commandsText += copyCmd("sysinfo", "系统状态") + "\n";
+          commandsText += copyCmd("uptime", "运行时间") + "\n";
+          commandsText += copyCmd("health", "健康检查") + "\n";
+          commandsText += copyCmd("db", "数据库统计") + "\n";
+          commandsText += copyCmd("cache", "缓存统计") + "\n";
+          commandsText += copyCmd("ratelimit", "限流统计") + "\n\n";
           
           commandsText += "🔍 其他功能:\n";
-          commandsText += "  speedtest - 网速测试\n";
-          commandsText += "  pan - 网盘搜索\n";
-          commandsText += "  plugin list - 插件列表";
+          commandsText += copyCmd("speedtest", "网速测试") + "\n";
+          commandsText += copyCmd("pan", "网盘搜索") + "\n";
+          commandsText += copyCmd("plugin list", "插件列表");
           
           text += fmt.bold("📌 常用命令") + "\n";
           text += `<blockquote expandable>${commandsText}</blockquote>`;

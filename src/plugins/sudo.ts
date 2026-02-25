@@ -114,10 +114,12 @@ const sudoPlugin: Plugin = {
 
           default: {
             const prefix = process.env.CMD_PREFIX || ".";
+            const copyCmd = (cmd: string, desc: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(prefix + cmd)}</a> - ${desc}`;
+            
             let text = fmt.bold("👑 Sudo 权限管理") + "\n\n";
-            text += fmt.code(prefix + "sudo add <用户>") + " - 添加 sudo 权限\n";
-            text += fmt.code(prefix + "sudo remove <用户ID>") + " - 移除 sudo 权限\n";
-            text += fmt.code(prefix + "sudo list") + " - 列出所有 sudo 用户";
+            text += copyCmd("sudo add <用户>", "添加 sudo 权限") + "\n";
+            text += copyCmd("sudo remove <用户ID>", "移除 sudo 权限") + "\n";
+            text += copyCmd("sudo list", "列出所有 sudo 用户");
             await ctx.replyHTML(text);
           }
         }
