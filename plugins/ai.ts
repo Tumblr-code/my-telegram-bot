@@ -1092,10 +1092,10 @@ const chatOpenAI = async (p: Provider, model: string, msgs: { role: string; cont
       type: "function",
       function: {
         name: "web_search",
-        description: "Search the web for current information and return relevant results",
+        description: "联网搜索当前信息并返回相关结果",
         parameters: {
           type: "object",
-          properties: { query: { type: "string", description: "The search query to execute" } },
+          properties: { query: { type: "string", description: "搜索关键词" } },
           required: ["query"]
         }
       }
