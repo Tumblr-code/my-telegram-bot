@@ -45,7 +45,6 @@ const sysinfoPlugin: Plugin = {
         const info = getSystemInfo();
         const botName = process.env.BOT_NAME || "NexBot";
         const botVersion = VERSION;
-        const pluginCount = pluginManager.getAllPlugins().length;
 
         // 精美系统信息
         let text = fmt.bold(`${EMOJI.CHART} ${botName}`) + ` ${EMOJI.VERSION} ${fmt.italic("v" + botVersion)}\n\n`;
@@ -59,10 +58,21 @@ const sysinfoPlugin: Plugin = {
         text += `${EMOJI.MEMORY} ${memBar} ${memPercent}%\n`;
         text += `${info.memory.used}MB / ${info.memory.total}MB\n\n`;
         
-        // CPU 信息
+        // CPU 信息 - 显示核心数和型号
         const cpuBar = "█".repeat(Math.floor(info.cpu.usage / 10)) + "░".repeat(10 - Math.floor(info.cpu.usage / 10));
+        // 简化 CPU 型号显示
+        const cpuModel = info.cpu.model
+          .replace(/\(R\)/g, "")
+          .replace(/\(TM\)/g, "")
+          .replace(/Intel\s*/i, "")
+          .replace(/AMD\s*/i, "")
+          .replace(/CPU\s*/gi, "")
+          .replace(/\s+Processor/gi, "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .substring(0, 25);
         text += `${EMOJI.CPU} ${cpuBar} ${info.cpu.usage}%\n`;
-        text += `${info.cpu.cores}核 · ${pluginCount}插件`;
+        text += `${info.cpu.cores}核 · ${cpuModel}`;
 
         await ctx.replyHTML(text);
       },
