@@ -127,33 +127,6 @@ bun run dev
 | **[crazy4](https://github.com/Tumblr-code/NexBot/blob/main/plugins/crazy4.ts)** | `crazy4` | 疯狂星期四文案 |
 | **[system](https://github.com/Tumblr-code/NexBot/blob/main/plugins/system.ts)** | `update/upgrade/restart/status/logs/sys` | 系统管理（更新/重启/日志） |
 
-#### AI 插件子命令
-
-| 子命令 | 描述 |
-|--------|------|
-| `ai <问题>` | 普通对话 |
-| `ai chat <问题>` | 连续对话（带上下文） |
-| `ai search <关键词>` | 联网搜索 |
-| `ai image <描述>` | 生成图片 |
-| `ai tts <文本>` | 文字转语音 |
-| `ai audio <语音>` | 语音回答 |
-| `ai prompt <预设>` | 设置全局预设 |
-| `ai config` | 查看配置 |
-| `ai model` | 切换模型 |
-
-#### PrivateGuard 插件命令
-
-| 命令 | 描述 |
-|------|------|
-| `pglist` | 查看已验证用户列表 |
-| `pgallow <用户ID>` | 添加白名单 |
-| `pgremove <用户ID>` | 移除白名单 |
-| `pgreset` | 重置所有数据 |
-| `pgtype <math/click/random>` | 切换验证类型 |
-| `pgblocklist` | 查看黑名单 |
-| `pgblock <用户ID>` | 拉黑用户 |
-| `pgunblock <用户ID>` | 解除拉黑 |
-
 ### 开发插件
 
 创建一个简单的插件：
