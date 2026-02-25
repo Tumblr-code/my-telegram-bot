@@ -103,7 +103,7 @@ function generateWeatherPoster(
   <text x="300" y="130" font-family="Arial, sans-serif" font-size="24" 
         fill="${subTextColor}" text-anchor="middle">${country}</text>
   
-  <text x="300" y="270" font-family="sans-serif" font-size="130" text-anchor="middle">${info.icon}</text>
+  <text x="300" y="270" font-family="Arial, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif" font-size="130" text-anchor="middle">${info.icon}</text>
   <text x="300" y="330" font-family="Arial, sans-serif" font-size="36" font-weight="bold"
         fill="${textColor}" text-anchor="middle">${info.desc}</text>
   
