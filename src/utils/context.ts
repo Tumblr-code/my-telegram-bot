@@ -6,8 +6,12 @@ export function createContext(
   msg: Message,
   isSudo: boolean
 ): CommandContext {
-  const chatId = msg.chatId;
+  const chatId = msg.chatId || (msg as any).peerId?.userId;
   const messageId = msg.id;
+
+  if (!chatId) {
+    throw new Error("无法获取聊天 ID");
+  }
 
   return {
     client,
@@ -17,7 +21,7 @@ export function createContext(
     isChannel: msg.chat?.className === "Channel" && !(msg.chat as any).megagroup,
 
     async reply(text: string, options: ReplyOptions = {}): Promise<Api.Message> {
-      return await client.sendMessage(chatId!, {
+      return await client.sendMessage(chatId, {
         message: text,
         replyTo: options.replyToMessageId ? Number(options.replyToMessageId) : Number(messageId),
         parseMode: options.parseMode,
@@ -32,7 +36,7 @@ export function createContext(
 
     async deleteMessage(): Promise<void> {
       try {
-        await client.deleteMessages(chatId!, [messageId], { revoke: true });
+        await client.deleteMessages(chatId, [messageId], { revoke: true });
       } catch (err) {
         // 忽略删除错误
       }

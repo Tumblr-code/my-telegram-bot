@@ -107,17 +107,21 @@ export class CommandHandler {
         logger.debug(`命令执行: ${cmdName} [${senderId}]`);
         healthChecker.recordCommand(true);
       } catch (err) {
-        logger.error(`命令执行错误 ${cmdName}:`, err);
+        const errorMsg = err instanceof Error ? err.message : "未知错误";
+        const errorStack = err instanceof Error ? err.stack : "";
+        logger.error(`命令执行错误 ${cmdName}: ${errorMsg}`);
+        if (errorStack) logger.error(`堆栈: ${errorStack}`);
         healthChecker.recordCommand(false);
         
         try {
-          const errorMsg = err instanceof Error ? err.message : "未知错误";
-          await this.client.sendMessage(msg.chatId as any, {
-            message: `❌ 命令执行出错: ${errorMsg}`,
-            replyTo: msg.id,
-          });
-        } catch {
-          // 忽略发送错误
+          const chatId = (msg as any).chatId || (msg as any).peerId?.userId;
+          if (chatId) {
+            await this.client.sendMessage(chatId, {
+              message: `❌ 命令执行出错: ${errorMsg}`,
+            });
+          }
+        } catch (sendErr) {
+          logger.error("发送错误消息失败:", sendErr);
         }
       }
     } catch (err) {
