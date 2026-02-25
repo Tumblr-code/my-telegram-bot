@@ -411,6 +411,14 @@ const checkAnswer = async (
     pendingUsers.delete(userId);
     saveData();
 
+    // 删除验证题目消息
+    const verifyMsgId = verifyMessageIds.get(userId);
+    if (verifyMsgId) {
+      await deleteMessage(client, pending.chatId, verifyMsgId);
+      verifyMessageIds.delete(userId);
+      console.log(`[privateguard] 已删除验证消息: ${verifyMsgId}`);
+    }
+
     // 发送成功消息
     await client.sendMessage(pending.chatId, {
       message: "✅ 验证通过！你现在可以正常私聊了",
