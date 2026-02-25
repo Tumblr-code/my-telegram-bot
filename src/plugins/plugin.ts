@@ -3,9 +3,18 @@ import { pluginManager } from "../core/pluginManager.js";
 import { db } from "../utils/database.js";
 import { fmt } from "../utils/context.js";
 import { logger } from "../utils/logger.js";
-import { readdirSync, existsSync } from "fs";
+import { readdirSync, existsSync, readFileSync } from "fs";
 import { join } from "path";
-import axios from "axios";
+
+// 插件信息接口
+interface PluginInfo {
+  name: string;
+  version: string;
+  description: string;
+  author: string;
+  commands: string[];
+  installed: boolean;
+}
 
 const pluginPlugin: Plugin = {
   name: "plugin",
@@ -28,64 +37,88 @@ const pluginPlugin: Plugin = {
             const prefix = process.env.CMD_PREFIX || ".";
             const copyCmd = (cmd: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(cmd)}</a>`;
             
-            // 获取远程仓库插件列表
-            let remotePlugins: Record<string, any> = {};
-            try {
-              const registryUrl = process.env.PLUGIN_REGISTRY_URL || "https://raw.githubusercontent.com/nexbot/plugins/main/registry.json";
-              const response = await axios.get(registryUrl, { timeout: 5000 });
-              remotePlugins = response.data?.plugins || {};
-            } catch (err) {
-              logger.warn("获取远程插件列表失败");
+            // 扫描本地插件目录
+            const pluginsDir = join(process.cwd(), "plugins");
+            const availablePlugins: PluginInfo[] = [];
+            
+            if (existsSync(pluginsDir)) {
+              const files = readdirSync(pluginsDir).filter(f => f.endsWith(".ts") || f.endsWith(".js"));
+              
+              for (const file of files) {
+                const name = file.replace(/\.(ts|js)$/, "");
+                const pluginPath = join(pluginsDir, file);
+                
+                try {
+                  // 读取文件内容提取信息
+                  const content = readFileSync(pluginPath, "utf-8");
+                  const info = extractPluginInfo(content, name);
+                  info.installed = db.isPluginEnabled(name);
+                  availablePlugins.push(info);
+                } catch (err) {
+                  logger.warn(`解析插件 ${name} 信息失败`);
+                }
+              }
             }
             
-            // 获取已安装插件
+            // 获取已安装的内置插件
             const installedPlugins = pluginManager.getAllPlugins();
-            const installedNames = new Set(installedPlugins.map(p => p.name));
+            const installedExternal = availablePlugins.filter(p => p.installed);
+            const notInstalled = availablePlugins.filter(p => !p.installed);
             
             // 构建消息
-            let text = fmt.bold("🔌 NexBot 插件中心") + "\n\n";
+            let text = fmt.bold("🔌 NexBot 插件中心") + "\n";
+            text += fmt.italic(`${availablePlugins.length} 可用 · ${installedExternal.length} 已装`) + "\n\n";
             
-            // 1. 远程可用插件（带详细介绍）
-            const availablePlugins = Object.entries(remotePlugins).filter(([name]) => !installedNames.has(name));
-            
-            if (availablePlugins.length > 0) {
-              text += fmt.bold("📥 可安装插件") + "\n";
+            // 1. 可安装插件（带详细介绍）
+            if (notInstalled.length > 0) {
+              text += fmt.bold("📥 可安装") + "\n";
               
               let availableText = "";
-              for (const [name, info] of availablePlugins.slice(0, 10)) { // 最多显示10个
-                const installBtn = `<a href="tg://copy?text=${encodeURIComponent(prefix + "plugin install " + name)}">⬇️ 安装</a>`;
-                availableText += `${fmt.bold(name)} v${info.version || "1.0.0"} ${installBtn}\n`;
-                if (info.description) {
-                  availableText += `  ${info.description}\n`;
+              for (const plugin of notInstalled.slice(0, 8)) { // 最多显示8个
+                const installCmd = prefix + "plugin install " + plugin.name;
+                const installBtn = `<a href="tg://copy?text=${encodeURIComponent(installCmd)}">📥 安装</a>`;
+                
+                availableText += `${fmt.bold(plugin.name)} ${installBtn}\n`;
+                
+                // 描述（取第一行）
+                const shortDesc = plugin.description.split("\n")[0].slice(0, 40);
+                availableText += `  ${shortDesc}${plugin.description.length > 40 ? "..." : ""}\n`;
+                
+                // 命令列表
+                if (plugin.commands.length > 0) {
+                  const cmdStr = plugin.commands.slice(0, 4).map(c => fmt.code(c)).join(" ");
+                  availableText += `  ${cmdStr}${plugin.commands.length > 4 ? " ..." : ""}\n`;
                 }
-                availableText += `  👤 ${info.author || "Unknown"}\n\n`;
+                
+                availableText += `  👤 ${plugin.author} · v${plugin.version}\n\n`;
               }
               
-              if (availablePlugins.length > 10) {
-                availableText += `... 还有 ${availablePlugins.length - 10} 个插件\n`;
+              if (notInstalled.length > 8) {
+                availableText += `... 还有 ${notInstalled.length - 8} 个\n`;
               }
               
               text += `<blockquote expandable>${availableText.trim()}</blockquote>\n\n`;
             }
             
-            // 2. 本地已安装插件（简洁显示）
-            if (installedPlugins.length > 0) {
-              text += fmt.bold("✅ 已安装插件") + "\n";
+            // 2. 已安装插件（简洁显示）
+            const allInstalled = [...installedPlugins.map(p => ({ name: p.name, commands: getPluginCmds(p) })), 
+                                  ...installedExternal.map(p => ({ name: p.name, commands: p.commands }))];
+            
+            if (allInstalled.length > 0) {
+              text += fmt.bold("✅ 已安装") + "\n";
               
               let installedText = "";
-              for (const plugin of installedPlugins) {
-                const cmds: string[] = [];
-                if (plugin.commands) cmds.push(...Object.keys(plugin.commands));
-                if (plugin.cmdHandlers) cmds.push(...Object.keys(plugin.cmdHandlers));
-                
-                const cmdList = cmds.length > 0 ? cmds.slice(0, 3).join(", ") + (cmds.length > 3 ? "..." : "") : "无命令";
+              for (const plugin of allInstalled) {
+                const cmdList = plugin.commands.length > 0 
+                  ? plugin.commands.slice(0, 3).join(" ") + (plugin.commands.length > 3 ? "..." : "")
+                  : "无命令";
                 installedText += `• ${fmt.bold(plugin.name)} — ${cmdList}\n`;
               }
               
               text += `<blockquote expandable>${installedText.trim()}</blockquote>\n\n`;
             }
             
-            text += `💡 使用 ${copyCmd("plugin install <名称>")} 安装插件`;
+            text += `💡 ${copyCmd("plugin install <名称>")}`;
             
             await ctx.replyHTML(text);
             break;
@@ -251,5 +284,67 @@ const pluginPlugin: Plugin = {
     },
   },
 };
+
+// 从插件文件内容提取信息
+function extractPluginInfo(content: string, defaultName: string): PluginInfo {
+  const info: PluginInfo = {
+    name: defaultName,
+    version: "1.0.0",
+    description: "暂无描述",
+    author: "Unknown",
+    commands: [],
+    installed: false,
+  };
+  
+  // 提取 name
+  const nameMatch = content.match(/name\s*=\s*["']([^"']+)["']/);
+  if (nameMatch) info.name = nameMatch[1];
+  
+  // 提取 version
+  const versionMatch = content.match(/version\s*=\s*["']([^"']+)["']/);
+  if (versionMatch) info.version = versionMatch[1];
+  
+  // 提取 description（支持模板字符串和普通字符串）
+  const descMatch = content.match(/description\s*=\s*(?:[`"'])([^`"']+)(?:[`"'])/);
+  if (descMatch) {
+    info.description = descMatch[1].replace(/\\n/g, "\n").trim();
+  }
+  
+  // 提取 author
+  const authorMatch = content.match(/author\s*=\s*["']([^"']+)["']/);
+  if (authorMatch) info.author = authorMatch[1];
+  
+  // 提取命令（从 cmdHandlers 或 commands）
+  const cmdHandlerMatch = content.match(/cmdHandlers\s*=\s*\{([^}]+)\}/s);
+  if (cmdHandlerMatch) {
+    const cmdMatches = cmdHandlerMatch[1].matchAll(/(\w+)\s*:/g);
+    for (const match of cmdMatches) {
+      if (!info.commands.includes(match[1])) {
+        info.commands.push(match[1]);
+      }
+    }
+  }
+  
+  // 从 commands 对象提取
+  const commandsMatch = content.match(/commands\s*:\s*\{([^}]+)\}/s);
+  if (commandsMatch) {
+    const cmdMatches = commandsMatch[1].matchAll(/(\w+)\s*:\s*\{/g);
+    for (const match of cmdMatches) {
+      if (!info.commands.includes(match[1])) {
+        info.commands.push(match[1]);
+      }
+    }
+  }
+  
+  return info;
+}
+
+// 获取插件的命令列表
+function getPluginCmds(plugin: any): string[] {
+  const cmds: string[] = [];
+  if (plugin.commands) cmds.push(...Object.keys(plugin.commands));
+  if (plugin.cmdHandlers) cmds.push(...Object.keys(plugin.cmdHandlers));
+  return cmds;
+}
 
 export default pluginPlugin;
