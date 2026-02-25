@@ -327,22 +327,24 @@ function extractPluginInfo(content: string, defaultName: string): PluginInfo {
     installed: false,
   };
   
-  // 提取 name
-  const nameMatch = content.match(/name\s*=\s*["']([^"']+)["']/);
+  // 提取 name（支持对象属性和赋值语句）
+  const nameMatch = content.match(/name\s*[:=]\s*["']([^"']+)["']/);
   if (nameMatch) info.name = nameMatch[1];
   
-  // 提取 version
-  const versionMatch = content.match(/version\s*=\s*["']([^"']+)["']/);
+  // 提取 version（支持对象属性和赋值语句）
+  const versionMatch = content.match(/version\s*[:=]\s*["']([^"']+)["']/);
   if (versionMatch) info.version = versionMatch[1];
   
-  // 提取 description（支持模板字符串和普通字符串）
-  const descMatch = content.match(/description\s*=\s*(?:[`"'])([^`"']+)(?:[`"'])/);
+  // 提取 description（支持对象属性和赋值语句，以及模板字符串和普通字符串）
+  // 匹配: description: "xxx" 或 description = "xxx" 或 description: `xxx`
+  const descMatch = content.match(/description\s*[:=]\s*["']([^"']+)["']/) || 
+                    content.match(/description\s*[:=]\s*`([^`]+)`/);
   if (descMatch) {
     info.description = descMatch[1].replace(/\\n/g, "\n").trim();
   }
   
-  // 提取 author
-  const authorMatch = content.match(/author\s*=\s*["']([^"']+)["']/);
+  // 提取 author（支持对象属性和赋值语句）
+  const authorMatch = content.match(/author\s*[:=]\s*["']([^"']+)["']/);
   if (authorMatch) info.author = authorMatch[1];
   
   // 提取命令（从 cmdHandlers 或 commands）
