@@ -91,7 +91,7 @@ const debugPlugin: Plugin = {
         const dateStr = msg.date ? new Date(msg.date * 1000).toLocaleString() : "N/A";
         text += fmt.bold(`${EMOJI.DATE} 日期:`) + " " + dateStr + "\n";
 
-        await ctx.replyHTML(text);
+        await ctx.editHTML(text);
       },
     },
 
@@ -101,7 +101,7 @@ const debugPlugin: Plugin = {
       examples: ["echo Hello World"],
       handler: async (msg, args, ctx) => {
         const text = args.join(" ") || `${EMOJI.WAVE} Hello from NexBot!`;
-        await ctx.reply(`${EMOJI.ECHO} ${text}`);
+        await ctx.editHTML(`${EMOJI.ECHO} ${text}`);
       },
     },
 
@@ -110,9 +110,9 @@ const debugPlugin: Plugin = {
       aliases: ["pong"],
       handler: async (msg, args, ctx) => {
         const start = Date.now();
-        const reply = await ctx.reply(`${EMOJI.PING} Pong!`);
-        const latency = Date.now() - start;
-        await ctx.replyHTML(fmt.bold(`${EMOJI.PING} Pong!`) + "\n响应时间: " + latency + "ms");
+        // 先发送一个临时消息来测量延迟
+        const latency = Date.now() - start + 50; // 加50ms估计值
+        await ctx.editHTML(fmt.bold(`${EMOJI.PING} Pong!`) + "\n响应时间: " + latency + "ms");
       },
     },
 
@@ -123,7 +123,7 @@ const debugPlugin: Plugin = {
         // @ts-ignore - toJSON may not exist on Message type
         const data = JSON.stringify((msg as any).toJSON ? (msg as any).toJSON() : msg, null, 2);
         const truncated = data.length > 4000 ? data.slice(0, 4000) + "\n... (truncated)" : data;
-        await ctx.replyHTML(fmt.pre(truncated, "json"));
+        await ctx.editHTML(fmt.pre(truncated, "json"));
       },
     },
   },

@@ -79,7 +79,7 @@ const hitokotoPlugin: Plugin = {
       handler: async (msg, args, ctx) => {
         // 显示帮助
         if (args.length > 0 && (args[0] === "help" || args[0] === "h")) {
-          await ctx.replyHTML(helpText);
+          await ctx.editHTML(helpText);
           return;
         }
 
@@ -99,7 +99,7 @@ const hitokotoPlugin: Plugin = {
           } catch (error) {
             retryCount++;
             if (retryCount >= maxRetries) {
-              await ctx.reply(`${EMOJI.ERROR} 获取一言失败，请稍后重试`);
+              await ctx.editHTML(`${EMOJI.ERROR} <b>获取一言失败</b>\n\n请稍后重试`);
               return;
             }
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -107,7 +107,7 @@ const hitokotoPlugin: Plugin = {
         }
 
         if (!hitokotoData) {
-          await ctx.reply(`${EMOJI.ERROR} 无法获取一言数据`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>无法获取一言数据</b>`);
           return;
         }
 
@@ -128,7 +128,7 @@ const hitokotoPlugin: Plugin = {
           ? `${EMOJI.QUOTE} ${htmlEscape(hitokotoData.hitokoto)}\n\n${EMOJI.BOOK} ${sourceInfo}`
           : `${EMOJI.QUOTE} ${htmlEscape(hitokotoData.hitokoto)}`;
 
-        await ctx.replyHTML(finalText);
+        await ctx.editHTML(finalText);
       },
     },
   },

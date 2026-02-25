@@ -55,6 +55,30 @@ export function createContext(
       return await client.sendMessage(target, sendOptions);
     },
 
+    async edit(text: string, options: ReplyOptions = {}): Promise<Api.Message> {
+      const target = chat || chatId;
+      return await client.editMessage(target, {
+        message: messageId,
+        text: text,
+        parseMode: options.parseMode,
+        linkPreview: options.disableWebPagePreview === false,
+      });
+    },
+
+    async editHTML(html: string, options: ReplyOptions = {}): Promise<Api.Message> {
+      const target = chat || chatId;
+      const editOptions: any = {
+        message: messageId,
+        text: html,
+        parseMode: "html",
+        linkPreview: options.disableWebPagePreview === false,
+      };
+      if (options.replyMarkup) {
+        editOptions.buttons = options.replyMarkup.inlineKeyboard || options.replyMarkup;
+      }
+      return await client.editMessage(target, editOptions);
+    },
+
     async deleteMessage(): Promise<void> {
       try {
         const target = chat || chatId;

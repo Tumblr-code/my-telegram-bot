@@ -124,43 +124,10 @@ const speedtestPlugin: Plugin = {
 
       handler: async (msg, args, ctx) => {
         try {
-          // 修复：添加空值检查，确保 chatId 存在
-          const chatId = msg.chatId;
-          if (!chatId) {
-            await ctx.reply(`${EMOJI.ERROR} 无法获取聊天 ID`);
-            return;
-          }
-
-          // 修复：正确处理 msg.id 可能是 BigInt 的情况
-          const replyToId = typeof msg.id === "bigint" ? Number(msg.id) : msg.id;
-
-          // 发送初始消息
-          const status = await ctx.client.sendMessage(chatId, {
-            message: `${EMOJI.LOADING} 正在测试网速，请稍候...`,
-            replyTo: replyToId,
-          });
-
-          // 修复：检查 status.id 是否存在
-          const statusId = status.id ? Number(status.id) : undefined;
-          if (!statusId) {
-            await ctx.reply(`${EMOJI.ERROR} 发送状态消息失败`);
-            return;
-          }
-
           // 测试延迟
-          await ctx.client.editMessage(chatId, {
-            message: statusId,
-            text: `${EMOJI.LOADING} 正在测试网速...\n${EMOJI.PING} 测试延迟中...`,
-          });
-
           const pingResult = await testPing();
 
           // 测试下载速度
-          await ctx.client.editMessage(chatId, {
-            message: statusId,
-            text: `${EMOJI.LOADING} 正在测试网速...\n${EMOJI.PING} 延迟测试完成\n${EMOJI.DOWNLOAD} 测试下载速度中...`,
-          });
-
           const downloadResult = await testDownloadSpeed();
 
           // 构建美观的结果
@@ -210,14 +177,10 @@ const speedtestPlugin: Plugin = {
 
           text += `\n\n<i>⏰ 测试时间: ${new Date().toLocaleString("zh-CN")}</i>`;
 
-          await ctx.client.editMessage(chatId, {
-            message: statusId,
-            text,
-            parseMode: "html",
-          });
+          await ctx.editHTML(text);
         } catch (err) {
           console.error("[speedtest] 错误:", err);
-          await ctx.reply(`${EMOJI.ERROR} 测试失败: ${err instanceof Error ? err.message : "未知错误"}`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>测试失败</b>\n\n${err instanceof Error ? err.message : "未知错误"}`);
         }
       },
     },

@@ -144,7 +144,7 @@ const crazy4Plugin: Plugin = {
         const randomIndex = Math.floor(Math.random() * crazy4Data.length);
         const text = crazy4Data[randomIndex];
         
-        await ctx.replyHTML(text);
+        await ctx.editHTML(text);
       },
     },
   },

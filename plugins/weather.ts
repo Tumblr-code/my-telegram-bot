@@ -223,7 +223,7 @@ const weatherPlugin: Plugin = {
         try {
           // 无参数显示帮助
           if (args.length === 0) {
-            await ctx.replyHTML(
+            await ctx.editHTML(
               `${EMOJI.WORLD} <b>天气查询</b>\n\n` +
               `<b>用法：</b><code>.weather &lt;城市名&gt;</code>\n\n` +
               `<b>示例：</b>\n` +
@@ -258,7 +258,7 @@ const weatherPlugin: Plugin = {
           );
 
           if (!geoResponse.data.results || geoResponse.data.results.length === 0) {
-            await ctx.replyHTML(
+            await ctx.editHTML(
               `${EMOJI.ERROR} <b>城市未找到</b>\n\n` +
               `无法找到城市: <code>${htmlEscape(originalInput)}</code>\n\n` +
               `<b>建议：</b>\n` +
@@ -304,7 +304,7 @@ const weatherPlugin: Plugin = {
           const data = weatherResponse.data;
 
           if (!data.current) {
-            await ctx.reply(`${EMOJI.ERROR} 无法获取天气数据`);
+            await ctx.editHTML(`${EMOJI.ERROR} <b>无法获取天气数据</b>`);
             return;
           }
 
@@ -332,7 +332,7 @@ const weatherPlugin: Plugin = {
             }
           }
 
-          await ctx.replyHTML(report);
+          await ctx.editHTML(report);
 
         } catch (error: any) {
           console.error("[weather] 插件执行失败:", error);
@@ -342,7 +342,7 @@ const weatherPlugin: Plugin = {
             return;
           }
           
-          await ctx.reply(`${EMOJI.ERROR} 查询失败: ${error.message || "未知错误"}`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>查询失败</b>\n\n${error.message || "未知错误"}`);
         }
       },
     },

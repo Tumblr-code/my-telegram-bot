@@ -74,7 +74,7 @@ const sysinfoPlugin: Plugin = {
         text += `${EMOJI.CPU} ${cpuBar} ${info.cpu.usage}%\n`;
         text += `${info.cpu.cores}核 · ${cpuModel}`;
 
-        await ctx.replyHTML(text);
+        await ctx.editHTML(text);
       },
     },
 
@@ -83,7 +83,7 @@ const sysinfoPlugin: Plugin = {
       aliases: ["up"],
       handler: async (msg, args, ctx) => {
         const info = getSystemInfo();
-        await ctx.replyHTML(
+        await ctx.editHTML(
           fmt.bold(`${EMOJI.UPTIME} 运行时间`) + "\n\n" +
           `${EMOJI.TIME} 系统: ${formatUptime(info.uptime)}\n` +
           `${EMOJI.TIME} 进程: ${formatUptime(process.uptime())}`
@@ -101,7 +101,7 @@ const sysinfoPlugin: Plugin = {
         let text = fmt.bold(`${EMOJI.DATABASE} 数据库`) + "\n\n";
         text += `${EMOJI.TAG} ${aliases} 别名`;
 
-        await ctx.replyHTML(text);
+        await ctx.editHTML(text);
       },
     },
 
@@ -125,7 +125,7 @@ const sysinfoPlugin: Plugin = {
           }
         }
 
-        await ctx.replyHTML(text);
+        await ctx.editHTML(text);
       },
     },
 
@@ -139,7 +139,7 @@ const sysinfoPlugin: Plugin = {
         text += `${EMOJI.PACKAGE} ${stats.size} 条目\n`;
         text += `${EMOJI.TARGET} ${stats.hitRate}% 命中率`;
 
-        await ctx.replyHTML(text);
+        await ctx.editHTML(text);
       },
     },
 
@@ -154,7 +154,7 @@ const sysinfoPlugin: Plugin = {
         text += `${EMOJI.USER} ${stats.tracked} 用户\n`;
         text += `${EMOJI.BAN} ${stats.blocked} 封禁`;
 
-        await ctx.replyHTML(text);
+        await ctx.editHTML(text);
       },
     },
   },

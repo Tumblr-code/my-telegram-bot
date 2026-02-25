@@ -122,17 +122,9 @@ const ipPlugin: Plugin = {
         try {
           let query = args.join(" ");
 
-          // 如果没有参数，尝试获取回复消息中的IP/域名
+          // 如果没有参数，显示帮助
           if (!query) {
-            // 检查是否是回复消息
-            const msgAny = msg as any;
-            if (msgAny.replyToMsgId) {
-              await ctx.reply(`${EMOJI.ERROR} 请回复包含IP/域名的消息，或直接在命令后提供IP/域名`);
-              return;
-            }
-            
-            // 显示帮助
-            await ctx.replyHTML(
+            await ctx.editHTML(
               `${EMOJI.IP} <b>IP查询插件</b>\n\n` +
               `<b>使用方法：</b>\n` +
               `• <code>.ip &lt;IP地址&gt;</code>\n` +
@@ -144,8 +136,6 @@ const ipPlugin: Plugin = {
             );
             return;
           }
-
-          const loadingMsg = await ctx.reply(`${EMOJI.SEARCH} 正在查询: <code>${htmlEscape(query)}</code>`);
 
           const data = await getIpInfo(query);
 
@@ -201,11 +191,11 @@ const ipPlugin: Plugin = {
           }
 
           await ctx.deleteMessage();
-          await ctx.replyHTML(resultText);
+          await ctx.editHTML(resultText);
 
         } catch (error: any) {
           console.error("IP lookup error:", error);
-          await ctx.reply(`${EMOJI.ERROR} IP查询失败: ${error.message || "未知错误"}`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>IP查询失败</b>\n\n${error.message || "未知错误"}`);
         }
       },
     },

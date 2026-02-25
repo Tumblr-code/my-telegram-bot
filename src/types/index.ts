@@ -15,6 +15,8 @@ export interface CommandContext {
   client: TelegramClient;
   reply: (text: string, options?: ReplyOptions) => Promise<Message>;
   replyHTML: (html: string, options?: ReplyOptions) => Promise<Message>;
+  edit: (text: string, options?: ReplyOptions) => Promise<Message>;
+  editHTML: (html: string, options?: ReplyOptions) => Promise<Message>;
   deleteMessage: () => Promise<void>;
   isSudo: boolean;
   isPrivate: boolean;

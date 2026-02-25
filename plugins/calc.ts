@@ -247,14 +247,14 @@ const calcPlugin: Plugin = {
       handler: async (msg, args, ctx) => {
         try {
           if (args.length === 0) {
-            await ctx.replyHTML(helpText);
+            await ctx.editHTML(helpText);
             return;
           }
 
           const expression = args.join(" ");
 
           if (expression.length > MAX_EXPR_LENGTH) {
-            await ctx.replyHTML(
+            await ctx.editHTML(
               `${EMOJI.ERROR} <b>表达式过长</b>\n\n` +
               `最大长度: ${MAX_EXPR_LENGTH} 字符\n` +
               `当前长度: ${expression.length}`
@@ -266,7 +266,7 @@ const calcPlugin: Plugin = {
           try {
             result = SafeMathParser.calculate(expression);
           } catch (error: any) {
-            await ctx.replyHTML(
+            await ctx.editHTML(
               `${EMOJI.ERROR} <b>计算失败</b>\n\n` +
               `表达式: <code>${htmlEscape(expression)}</code>\n` +
               `错误: ${htmlEscape(error?.message ?? "未知错误")}`
@@ -275,7 +275,7 @@ const calcPlugin: Plugin = {
           }
 
           if (!Number.isFinite(result)) {
-            await ctx.replyHTML(
+            await ctx.editHTML(
               `${EMOJI.ERROR} <b>计算结果无效</b>\n\n` +
               `表达式: <code>${htmlEscape(expression)}</code>`
             );
@@ -284,13 +284,13 @@ const calcPlugin: Plugin = {
 
           const formatted = formatResult(result);
 
-          await ctx.replyHTML(
+          await ctx.editHTML(
             `${EMOJI.CALC} <b>计算结果</b>\n\n` +
             `<code>${htmlEscape(expression)}</code>\n` +
             `${EMOJI.ARROW} <b>${formatted}</b>`
           );
         } catch (error: any) {
-          await ctx.replyHTML(
+          await ctx.editHTML(
             `${EMOJI.ERROR} <b>插件错误</b>\n\n${htmlEscape(error?.message ?? "未知错误")}`
           );
         }

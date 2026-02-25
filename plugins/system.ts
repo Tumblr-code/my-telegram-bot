@@ -131,7 +131,7 @@ const systemPlugin: Plugin = {
         // 先检查Git状态
         const checkResult = await runCommand("git status");
         if (!checkResult.success) {
-          await ctx.reply(`${EMOJI.ERROR} Git检查失败: ${checkResult.error || checkResult.stderr}`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>Git检查失败</b>\n\n${checkResult.error || checkResult.stderr}`);
           return;
         }
         
@@ -142,14 +142,14 @@ const systemPlugin: Plugin = {
         // 获取远程更新
         const fetchResult = await runCommand("git fetch origin");
         if (!fetchResult.success) {
-          await ctx.reply(`${EMOJI.ERROR} 获取远程更新失败: ${fetchResult.error || fetchResult.stderr}`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>获取远程更新失败</b>\n\n${fetchResult.error || fetchResult.stderr}`);
           return;
         }
         
         // 检查是否有更新
         const logResult = await runCommand(`git log HEAD..origin/${branch} --oneline`);
         if (!logResult.stdout) {
-          await ctx.reply(`${EMOJI.INFO} 当前已经是最新版本，无需更新`);
+          await ctx.editHTML(`${EMOJI.INFO} <b>当前已经是最新版本</b>\n\n无需更新`);
           return;
         }
         
@@ -167,11 +167,11 @@ const systemPlugin: Plugin = {
         // 执行更新
         const pullResult = await runCommand(`git pull origin ${branch}`);
         if (!pullResult.success) {
-          await ctx.reply(`${EMOJI.ERROR} 更新失败: ${pullResult.error || pullResult.stderr}`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>更新失败</b>\n\n${pullResult.error || pullResult.stderr}`);
           return;
         }
         
-        await ctx.replyHTML(
+        await ctx.editHTML(
           `${EMOJI.SUCCESS} <b>更新成功!</b>\n\n` +
           `${EMOJI.RESTART} 请使用 <code>.restart</code> 命令重启Bot以应用更新`
         );
@@ -187,12 +187,12 @@ const systemPlugin: Plugin = {
         const result = await runCommand("bun install");
         
         if (!result.success) {
-          await ctx.reply(`${EMOJI.ERROR} 升级失败:\n${result.error || result.stderr}`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>升级失败</b>\n\n${result.error || result.stderr}`);
           return;
         }
         
         const output = result.stdout || "依赖已是最新";
-        await ctx.replyHTML(
+        await ctx.editHTML(
           `${EMOJI.SUCCESS} <b>依赖升级完成!</b>\n\n` +
           `<pre>${truncate(output, 2000)}</pre>\n\n` +
           `${EMOJI.RESTART} 如果有重大更新，建议重启Bot`
@@ -243,7 +243,7 @@ const systemPlugin: Plugin = {
       examples: ["status"],
       handler: async (msg, args, ctx) => {
         const status = await getSystemStatus();
-        await ctx.replyHTML(`${EMOJI.STATUS} <b>系统状态</b>\n\n${status}`);
+        await ctx.editHTML(`${EMOJI.STATUS} <b>系统状态</b>\n\n${status}`);
       },
     },
 
@@ -259,19 +259,19 @@ const systemPlugin: Plugin = {
         const logPath = join(process.cwd(), "logs", "bot.log");
         
         if (!existsSync(logPath)) {
-          await ctx.reply(`${EMOJI.ERROR} 日志文件不存在`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>日志文件不存在</b>`);
           return;
         }
         
         const result = await runCommand(`tail -n ${maxLines} "${logPath}"`);
         
         if (!result.success) {
-          await ctx.reply(`${EMOJI.ERROR} 读取日志失败: ${result.error}`);
+          await ctx.editHTML(`${EMOJI.ERROR} <b>读取日志失败</b>\n\n${result.error}`);
           return;
         }
         
         const logContent = result.stdout || "(日志为空)";
-        await ctx.replyHTML(
+        await ctx.editHTML(
           `${EMOJI.LOGS} <b>最近 ${maxLines} 行日志</b>\n\n` +
           `<pre>${truncate(logContent, 3500)}</pre>`
         );
@@ -285,7 +285,7 @@ const systemPlugin: Plugin = {
       examples: ["sys ps aux", "sys df -h"],
       handler: async (msg, args, ctx) => {
         if (args.length === 0) {
-          await ctx.reply(`${EMOJI.INFO} 用法: .sys <命令>`);
+          await ctx.editHTML(`${EMOJI.INFO} <b>用法</b>: <code>.sys &lt;命令&gt;</code>\n\n示例: <code>.sys ps aux</code>`);
           return;
         }
         
@@ -307,7 +307,7 @@ const systemPlugin: Plugin = {
         
         for (const dangerous of dangerousCommands) {
           if (command.includes(dangerous)) {
-            await ctx.reply(`${EMOJI.ERROR} 检测到危险命令，已阻止执行`);
+            await ctx.editHTML(`${EMOJI.ERROR} <b>检测到危险命令</b>\n\n已阻止执行: <code>${command}</code>`);
             return;
           }
         }
@@ -324,8 +324,9 @@ const systemPlugin: Plugin = {
         }
         
         const status = result.success ? EMOJI.SUCCESS : EMOJI.ERROR;
-        await ctx.replyHTML(
-          `${status} <b>执行结果</b>  ${fmt.code(command)}\n\n` +
+        const statusText = result.success ? "成功" : "失败";
+        await ctx.editHTML(
+          `${status} <b>执行${statusText}</b>  ${fmt.code(command)}\n\n` +
           `<pre>${truncate(output, 3500)}</pre>`
         );
       },
