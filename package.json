@@ -1,6 +1,6 @@
 {
   "name": "nexbot",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "下一代 Telegram Bot 框架 - 更快、更简单、更稳定",
   "type": "module",
   "main": "src/index.ts",

@@ -1,5 +1,5 @@
 /**
- * TeleBox AI 插件（完美整合版）
+ * NexAI 插件（完美整合版）
  * 兼容 OpenAI / Gemini / Claude / 火山 等标准接口
  * 功能：对话、搜索、识图、生图、TTS、语音回答、全局 Prompt 预设、上下文记忆、 Telegraph 长文等
  * 用法：.ai  或  .ai chat|search|image|tts|audio|searchaudio|prompt|config|model|...
@@ -897,7 +897,7 @@ const ensureTGToken = async (): Promise<string> => {
   const resp = await axiosWithRetry({
     method: "POST",
     url: "https://api.telegra.ph/createAccount",
-    params: { short_name: "TeleBoxAI", author_name: "TeleBox" }
+    params: { short_name: "NexAI", author_name: "NexBot" }
   });
   const t = resp.data?.result?.access_token || "";
   Store.data.telegraph.token = t;
@@ -1923,7 +1923,7 @@ const help_text = `🔧 ✨ <b>新增功能</b>
 
 /* ---------- 插件主体 ---------- */
 class AiPlugin extends Plugin {
-  name = "ai";
+  name = "NexAI";
   description = `🤖 智能AI助手\n\n${help_text}`;
   cmdHandlers = {
     ai: async (msg: Api.Message) => {
