@@ -249,8 +249,7 @@ function generateWeatherPoster(
   <text x="300" y="130" font-family="Arial, sans-serif" font-size="24" 
         fill="${subTextColor}" text-anchor="middle">${country}</text>
   
-  ${getWeatherIconSvg(weatherCode, isDay)}
-  <text x="300" y="360" font-family="Arial, sans-serif" font-size="36" font-weight="bold"
+  <text x="300" y="280" font-family="Arial, sans-serif" font-size="48" font-weight="bold"
         fill="${textColor}" text-anchor="middle">${info.desc}</text>
   
   <text x="300" y="430" font-family="Arial, sans-serif" font-size="100" font-weight="bold" 
