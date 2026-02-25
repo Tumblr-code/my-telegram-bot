@@ -48,128 +48,149 @@ const WEATHER_INFO: Record<number, { bg: string; accent: string; desc: string }>
   95: { bg: "#483D8B", accent: "#2F2F4F", desc: "雷雨" },
 };
 
-// 生成天气图标 SVG
+// 生成天气图标 SVG - 统一尺寸和位置
 function getWeatherIconSvg(code: number, isDay: number): string {
-  const colors = isDay === 0 ? { sun: "#F0E68C", cloud: "#606080", rain: "#87CEFA", snow: "#E0E0FF" } : { sun: "#FFD700", cloud: "#FFFFFF", rain: "#B0D0F0", snow: "#FFFFFF" };
+  const y = 230; // 统一 Y 坐标
+  const cloudColor = isDay === 0 ? "#707090" : "#FFFFFF";
+  
+  // 统一云形状
+  const cloud = (fill: string) => `<path d="M -50 -10 Q -80 -10 -100 -30 Q -120 -10 -150 -10 Q -180 -10 -180 -40 Q -180 -70 -150 -70 L 10 -70 Q 50 -70 50 -40 Q 50 -10 10 -10 Z" fill="${fill}" stroke="none"/>`;
   
   // 晴朗 - 太阳
   if (code === 0) {
-    return `<g transform="translate(300,230)">
-      <circle cx="0" cy="0" r="50" fill="${colors.sun}" stroke="#FFA500" stroke-width="3"/>
-      <g stroke="#FFA500" stroke-width="4" stroke-linecap="round">
-        <line x1="0" y1="-70" x2="0" y2="-55"/><line x1="0" y1="70" x2="0" y2="55"/>
-        <line x1="-70" y1="0" x2="-55" y2="0"/><line x1="70" y1="0" x2="55" y2="0"/>
-        <line x1="-50" y1="-50" x2="-40" y2="-40"/><line x1="50" y1="50" x2="40" y2="40"/>
-        <line x1="-50" y1="50" x2="-40" y2="40"/><line x1="50" y1="-50" x2="40" y2="-40"/>
+    return `<g transform="translate(300,${y})">
+      <circle cx="0" cy="0" r="45" fill="#FFD700"/>
+      <g stroke="#FFA500" stroke-width="5" stroke-linecap="round">
+        <line x1="0" y1="-65" x2="0" y2="-52"/>
+        <line x1="0" y1="65" x2="0" y2="52"/>
+        <line x1="-65" y1="0" x2="-52" y2="0"/>
+        <line x1="65" y1="0" x2="52" y2="0"/>
+        <line x1="-46" y1="-46" x2="-37" y2="-37"/>
+        <line x1="46" y1="46" x2="37" y2="37"/>
+        <line x1="-46" y1="46" x2="-37" y2="37"/>
+        <line x1="46" y1="-46" x2="37" y2="-37"/>
       </g>
     </g>`;
   }
-  // 大部晴朗 - 太阳+云
+  // 大部晴朗
   if (code === 1) {
-    return `<g transform="translate(300,230)">
-      <circle cx="-30" cy="-30" r="40" fill="${colors.sun}" stroke="#FFA500" stroke-width="2"/>
-      <path d="M -20 20 Q -50 20 -60 0 Q -70 20 -100 20 Q -130 20 -130 -10 Q -130 -40 -100 -40 L 20 -40 Q 50 -40 50 -10 Q 50 20 20 20 Z" fill="${colors.cloud}" stroke="#CCCCCC" stroke-width="2"/>
+    return `<g transform="translate(300,${y})">
+      <circle cx="-35" cy="-35" r="35" fill="#FFD700"/>
+      ${cloud("#F0F8FF")}
     </g>`;
   }
   // 多云
   if (code === 2) {
-    return `<g transform="translate(300,230)">
-      <circle cx="-40" cy="-40" r="30" fill="${colors.sun}" opacity="0.5"/>
-      <path d="M -40 10 Q -70 10 -90 -10 Q -110 10 -140 10 Q -170 10 -170 -20 Q -170 -50 -140 -50 L 0 -50 Q 40 -50 40 -20 Q 40 10 0 10 Z" fill="${colors.cloud}" stroke="#DDDDDD" stroke-width="2"/>
+    return `<g transform="translate(300,${y})">
+      <circle cx="-45" cy="-45" r="25" fill="#FFD700" opacity="0.6"/>
+      ${cloud(cloudColor)}
     </g>`;
   }
   // 阴天
   if (code === 3) {
-    return `<g transform="translate(300,230)">
-      <path d="M -50 0 Q -80 0 -100 -20 Q -120 0 -150 0 Q -180 0 -180 -30 Q -180 -60 -150 -60 L 10 -60 Q 50 -60 50 -30 Q 50 0 10 0 Z" fill="#D0D0D0" stroke="#AAAAAA" stroke-width="2"/>
-      <path d="M -20 -40 Q 10 -40 30 -60" fill="none" stroke="#AAAAAA" stroke-width="3"/>
+    return `<g transform="translate(300,${y})">
+      ${cloud("#D0D0D0")}
     </g>`;
   }
   // 雾
   if (code === 45) {
-    return `<g transform="translate(300,230)">
-      <path d="M -60 -10 Q -90 -10 -110 -30 Q -130 -10 -160 -10 Q -190 -10 -190 -40 Q -190 -70 -160 -70 L 0 -70 Q 40 -70 40 -40 Q 40 -10 0 -10 Z" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
-      <line x1="-80" y1="20" x2="80" y2="20" stroke="#CCCCCC" stroke-width="3" stroke-linecap="round"/>
-      <line x1="-60" y1="40" x2="60" y2="40" stroke="#CCCCCC" stroke-width="3" stroke-linecap="round"/>
+    return `<g transform="translate(300,${y})">
+      <rect x="-100" y="-30" width="200" height="20" rx="10" fill="#E0E0E0"/>
+      <rect x="-80" y="0" width="160" height="20" rx="10" fill="#D0D0D0"/>
+      <rect x="-60" y="30" width="120" height="20" rx="10" fill="#E0E0E0"/>
     </g>`;
   }
   // 毛毛雨/小雨
   if (code === 51 || code === 61) {
-    return `<g transform="translate(300,210)">
-      <path d="M -60 0 Q -90 0 -110 -20 Q -130 0 -160 0 Q -190 0 -190 -30 Q -190 -60 -160 -60 L 0 -60 Q 40 -60 40 -30 Q 40 0 0 0 Z" fill="#C0E0F8" stroke="#90C0E0" stroke-width="2"/>
-      <line x1="-60" y1="20" x2="-70" y2="50" stroke="${colors.rain}" stroke-width="3" stroke-linecap="round"/>
-      <line x1="-20" y1="20" x2="-30" y2="50" stroke="${colors.rain}" stroke-width="3" stroke-linecap="round"/>
-      <line x1="20" y1="20" x2="10" y2="50" stroke="${colors.rain}" stroke-width="3" stroke-linecap="round"/>
+    return `<g transform="translate(300,${y})">
+      ${cloud("#C0E0F8")}
+      <g stroke="#60A0D0" stroke-width="3" stroke-linecap="round">
+        <line x1="-60" y1="15" x2="-65" y2="35"/>
+        <line x1="-20" y1="15" x2="-25" y2="35"/>
+        <line x1="20" y1="15" x2="15" y2="35"/>
+      </g>
     </g>`;
   }
   // 中雨
   if (code === 63) {
-    return `<g transform="translate(300,210)">
-      <path d="M -60 -10 Q -90 -10 -110 -30 Q -130 -10 -160 -10 Q -190 -10 -190 -40 Q -190 -70 -160 -70 L 0 -70 Q 40 -70 40 -40 Q 40 -10 0 -10 Z" fill="#A0D0F8" stroke="#70B0E0" stroke-width="2"/>
-      <line x1="-70" y1="10" x2="-85" y2="60" stroke="#60A0D0" stroke-width="4" stroke-linecap="round"/>
-      <line x1="-20" y1="10" x2="-35" y2="60" stroke="#60A0D0" stroke-width="4" stroke-linecap="round"/>
-      <line x1="30" y1="10" x2="15" y2="60" stroke="#60A0D0" stroke-width="4" stroke-linecap="round"/>
-      <line x1="80" y1="10" x2="65" y2="60" stroke="#60A0D0" stroke-width="4" stroke-linecap="round"/>
+    return `<g transform="translate(300,${y})">
+      ${cloud("#A0D0F8")}
+      <g stroke="#4090D0" stroke-width="4" stroke-linecap="round">
+        <line x1="-70" y1="10" x2="-78" y2="45"/>
+        <line x1="-25" y1="10" x2="-33" y2="45"/>
+        <line x1="20" y1="10" x2="12" y2="45"/>
+        <line x1="65" y1="10" x2="57" y2="45"/>
+      </g>
     </g>`;
   }
   // 大雨
   if (code === 65) {
-    return `<g transform="translate(300,200)">
-      <path d="M -60 -10 Q -90 -10 -110 -30 Q -130 -10 -160 -10 Q -190 -10 -190 -40 Q -190 -70 -160 -70 L 0 -70 Q 40 -70 40 -40 Q 40 -10 0 -10 Z" fill="#80C0F8" stroke="#5090D0" stroke-width="2"/>
-      <line x1="-80" y1="20" x2="-100" y2="80" stroke="#4080C0" stroke-width="5" stroke-linecap="round"/>
-      <line x1="-30" y1="20" x2="-50" y2="80" stroke="#4080C0" stroke-width="5" stroke-linecap="round"/>
-      <line x1="20" y1="20" x2="0" y2="80" stroke="#4080C0" stroke-width="5" stroke-linecap="round"/>
-      <line x1="70" y1="20" x2="50" y2="80" stroke="#4080C0" stroke-width="5" stroke-linecap="round"/>
-      <line x1="120" y1="20" x2="100" y2="80" stroke="#4080C0" stroke-width="5" stroke-linecap="round"/>
+    return `<g transform="translate(300,${y})">
+      ${cloud("#80C0F8")}
+      <g stroke="#2070C0" stroke-width="5" stroke-linecap="round">
+        <line x1="-80" y1="10" x2="-90" y2="55"/>
+        <line x1="-40" y1="10" x2="-50" y2="55"/>
+        <line x1="0" y1="10" x2="-10" y2="55"/>
+        <line x1="40" y1="10" x2="30" y2="55"/>
+        <line x1="80" y1="10" x2="70" y2="55"/>
+      </g>
     </g>`;
   }
   // 小雪
   if (code === 71) {
-    return `<g transform="translate(300,210)">
-      <path d="M -60 0 Q -90 0 -110 -20 Q -130 0 -160 0 Q -190 0 -190 -30 Q -190 -60 -160 -60 L 0 -60 Q 40 -60 40 -30 Q 40 0 0 0 Z" fill="#E0F8FF" stroke="#C0E0F0" stroke-width="2"/>
-      <circle cx="-60" cy="30" r="6" fill="${colors.snow}"/>
-      <circle cx="-10" cy="50" r="6" fill="${colors.snow}"/>
-      <circle cx="40" cy="30" r="6" fill="${colors.snow}"/>
+    return `<g transform="translate(300,${y})">
+      ${cloud("#E8F8FF")}
+      <g fill="#FFFFFF">
+        <circle cx="-50" cy="25" r="5"/>
+        <circle cx="0" cy="40" r="5"/>
+        <circle cx="50" cy="25" r="5"/>
+      </g>
     </g>`;
   }
   // 中雪
   if (code === 73) {
-    return `<g transform="translate(300,210)">
-      <path d="M -60 -10 Q -90 -10 -110 -30 Q -130 -10 -160 -10 Q -190 -10 -190 -40 Q -190 -70 -160 -70 L 0 -70 Q 40 -70 40 -40 Q 40 -10 0 -10 Z" fill="#D0F0FF" stroke="#B0E0F0" stroke-width="2"/>
-      <rect x="-70" y="20" width="10" height="10" fill="${colors.snow}" rx="2"/>
-      <rect x="-20" y="40" width="10" height="10" fill="${colors.snow}" rx="2"/>
-      <rect x="30" y="20" width="10" height="10" fill="${colors.snow}" rx="2"/>
-      <rect x="-45" y="60" width="10" height="10" fill="${colors.snow}" rx="2"/>
-      <rect x="5" y="60" width="10" height="10" fill="${colors.snow}" rx="2"/>
+    return `<g transform="translate(300,${y})">
+      ${cloud("#D8F0FF")}
+      <g fill="#FFFFFF">
+        <rect x="-65" y="20" width="10" height="10" rx="2"/>
+        <rect x="-20" y="35" width="10" height="10" rx="2"/>
+        <rect x="25" y="20" width="10" height="10" rx="2"/>
+        <rect x="-42" y="50" width="10" height="10" rx="2"/>
+        <rect x="8" y="50" width="10" height="10" rx="2"/>
+      </g>
     </g>`;
   }
   // 大雪
   if (code === 75) {
-    return `<g transform="translate(300,200)">
-      <path d="M -60 -10 Q -90 -10 -110 -30 Q -130 -10 -160 -10 Q -190 -10 -190 -40 Q -190 -70 -160 -70 L 0 -70 Q 40 -70 40 -40 Q 40 -10 0 -10 Z" fill="#C0E8FF" stroke="#A0D8F0" stroke-width="2"/>
-      <rect x="-80" y="20" width="12" height="12" fill="${colors.snow}" rx="2"/>
-      <rect x="-30" y="40" width="12" height="12" fill="${colors.snow}" rx="2"/>
-      <rect x="20" y="20" width="12" height="12" fill="${colors.snow}" rx="2"/>
-      <rect x="70" y="40" width="12" height="12" fill="${colors.snow}" rx="2"/>
-      <rect x="-55" y="70" width="12" height="12" fill="${colors.snow}" rx="2"/>
-      <rect x="-5" y="70" width="12" height="12" fill="${colors.snow}" rx="2"/>
-      <rect x="45" y="70" width="12" height="12" fill="${colors.snow}" rx="2"/>
+    return `<g transform="translate(300,${y})">
+      ${cloud("#C8E8FF")}
+      <g fill="#FFFFFF">
+        <rect x="-80" y="20" width="12" height="12" rx="2"/>
+        <rect x="-30" y="35" width="12" height="12" rx="2"/>
+        <rect x="20" y="20" width="12" height="12" rx="2"/>
+        <rect x="70" y="35" width="12" height="12" rx="2"/>
+        <rect x="-55" y="55" width="12" height="12" rx="2"/>
+        <rect x="-5" y="55" width="12" height="12" rx="2"/>
+        <rect x="45" y="55" width="12" height="12" rx="2"/>
+      </g>
     </g>`;
   }
   // 雷雨
   if (code === 95) {
-    return `<g transform="translate(300,200)">
-      <path d="M -60 -10 Q -90 -10 -110 -30 Q -130 -10 -160 -10 Q -190 -10 -190 -40 Q -190 -70 -160 -70 L 0 -70 Q 40 -70 40 -40 Q 40 -10 0 -10 Z" fill="#606080" stroke="#404060" stroke-width="2"/>
-      <polygon points="-20,10 -30,50 -10,50 -20,90 10,40 -10,40" fill="#FFD700" stroke="#FFA500" stroke-width="2"/>
-      <line x1="-60" y1="60" x2="-75" y2="100" stroke="#87CEFA" stroke-width="4" stroke-linecap="round"/>
-      <line x1="-10" y1="60" x2="-25" y2="100" stroke="#87CEFA" stroke-width="4" stroke-linecap="round"/>
-      <line x1="40" y1="60" x2="25" y2="100" stroke="#87CEFA" stroke-width="4" stroke-linecap="round"/>
+    return `<g transform="translate(300,${y})">
+      ${cloud("#606080")}
+      <polygon points="-15,15 -25,45 -10,45 -20,75 10,35 -5,35" fill="#FFD700"/>
+      <g stroke="#87CEFA" stroke-width="4" stroke-linecap="round">
+        <line x1="-50" y1="50" x2="-60" y2="80"/>
+        <line x1="0" y1="50" x2="-10" y2="80"/>
+        <line x1="50" y1="50" x2="40" y2="80"/>
+      </g>
     </g>`;
   }
   // 默认
-  return `<g transform="translate(300,230)">
-    <circle cx="0" cy="0" r="50" fill="#87CEEB" stroke="#4682B4" stroke-width="3"/>
-    <text x="0" y="10" font-size="40" text-anchor="middle" fill="#FFFFFF">?</text>
+  return `<g transform="translate(300,${y})">
+    <circle cx="0" cy="0" r="45" fill="#87CEEB"/>
+    <text x="0" y="15" font-size="40" text-anchor="middle" fill="#FFFFFF" font-family="Arial">?</text>
   </g>`;
 }
 
