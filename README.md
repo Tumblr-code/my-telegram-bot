@@ -110,23 +110,6 @@ bun run dev
 | `plugin alias add <别名> <命令>` | 添加命令别名 |
 | `plugin alias remove <别名>` | 删除命令别名 |
 
-### 扩展插件
-
-插件文件存放在 `plugins/` 目录，安装后即可使用：
-
-| 插件 | 命令 | 描述 |
-|------|------|------|
-| **[ai](https://github.com/Tumblr-code/NexBot/blob/main/plugins/ai.ts)** | `ai` | AI 对话助手（支持 OpenAI/Gemini/Claude） |
-| **[pansou](https://github.com/Tumblr-code/NexBot/blob/main/plugins/pansou.ts)** | `pan` | 网盘搜索（Telegraph 排版） |
-| **[privateguard](https://github.com/Tumblr-code/NexBot/blob/main/plugins/privateguard.ts)** | `pglist` | 私聊保护（人机验证） |
-| **[speedtest](https://github.com/Tumblr-code/NexBot/blob/main/plugins/speedtest.ts)** | `speedtest` | 网速测试 |
-| **[calc](https://github.com/Tumblr-code/NexBot/blob/main/plugins/calc.ts)** | `calc` | 科学计算器（支持复杂表达式） |
-| **[hitokoto](https://github.com/Tumblr-code/NexBot/blob/main/plugins/hitokoto.ts)** | `hitokoto` | 随机一言（来自 hitokoto.cn） |
-| **[weather](https://github.com/Tumblr-code/NexBot/blob/main/plugins/weather.ts)** | `weather` | 天气查询（支持全球城市） |
-| **[ip](https://github.com/Tumblr-code/NexBot/blob/main/plugins/ip.ts)** | `ip` | IP/域名查询（地理位置+ISP） |
-| **[crazy4](https://github.com/Tumblr-code/NexBot/blob/main/plugins/crazy4.ts)** | `crazy4` | 疯狂星期四文案 |
-| **[system](https://github.com/Tumblr-code/NexBot/blob/main/plugins/system.ts)** | `update/upgrade/restart/status/logs/sys` | 系统管理（更新/重启/日志） |
-
 ### 开发插件
 
 创建一个简单的插件：
