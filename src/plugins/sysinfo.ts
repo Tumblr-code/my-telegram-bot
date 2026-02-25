@@ -21,7 +21,7 @@ const sysinfoPlugin: Plugin = {
       handler: async (msg, args, ctx) => {
         const info = getSystemInfo();
         const botName = process.env.BOT_NAME || "NexBot";
-        const botVersion = process.env.BOT_VERSION || "1.0.0";
+        const botVersion = VERSION;
         const pluginCount = pluginManager.getAllPlugins().length;
 
         // 简约风格系统信息
