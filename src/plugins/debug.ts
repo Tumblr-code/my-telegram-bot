@@ -33,25 +33,47 @@ const debugPlugin: Plugin = {
       aliases: ["chatid", "chat"],
       handler: async (msg, args, ctx) => {
         const chat = msg.chat;
-        // 修复：使用 senderId 或 fromId 获取发送者ID，而不是不存在的 sender 属性
-        const senderId = (msg as any).senderId || (msg as any).fromId;
+        const msgAny = msg as any;
+        
+        // 获取聊天 ID（优先从 chat，其次从 peerId）
+        let chatId = chat?.id?.toString();
+        let chatType = chat?.className;
+        let chatTitle = (chat as any)?.title;
+        let chatUsername = (chat as any)?.username;
+        
+        // 如果 chat 为空，从 peerId 获取
+        if (!chatId && msgAny.peerId) {
+          const peerId = msgAny.peerId;
+          if (peerId.userId) {
+            chatId = peerId.userId.toString();
+            chatType = "User (Private)";
+          } else if (peerId.channelId) {
+            chatId = peerId.channelId.toString();
+            chatType = "Channel";
+          } else if (peerId.chatId) {
+            chatId = peerId.chatId.toString();
+            chatType = "Chat (Group)";
+          }
+        }
+        
+        // 获取发送者 ID
+        const senderId = msgAny.senderId || msgAny.fromId;
         
         let text = fmt.bold(`${EMOJI.ID} 聊天信息`) + "\n\n";
-        text += fmt.bold(`${EMOJI.ID} 聊天 ID:`) + " " + (chat?.id?.toString() || "N/A") + "\n";
-        text += fmt.bold(`${EMOJI.TYPE} 聊天类型:`) + " " + (chat?.className || "N/A") + "\n";
+        text += fmt.bold(`${EMOJI.ID} 聊天 ID:`) + " " + (chatId || "N/A") + "\n";
+        text += fmt.bold(`${EMOJI.TYPE} 聊天类型:`) + " " + (chatType || "N/A") + "\n";
         
-        if ((chat as any)?.title) {
-          text += fmt.bold(`${EMOJI.TITLE} 标题:`) + " " + (chat as any).title + "\n";
+        if (chatTitle) {
+          text += fmt.bold(`${EMOJI.TITLE} 标题:`) + " " + chatTitle + "\n";
         }
-        if ((chat as any)?.username) {
-          text += fmt.bold(`${EMOJI.USERNAME} 用户名:`) + " @" + (chat as any).username + "\n";
+        if (chatUsername) {
+          text += fmt.bold(`${EMOJI.USERNAME} 用户名:`) + " @" + chatUsername + "\n";
         }
         
         text += "\n" + fmt.bold(`${EMOJI.SENDER} 发送者信息`) + "\n";
         text += fmt.bold(`${EMOJI.ID} 用户 ID:`) + " " + (senderId?.toString() || "N/A") + "\n";
         
         // 尝试从其他属性获取用户信息
-        const msgAny = msg as any;
         const sender = msgAny._sender || msgAny.sender;
         
         if (sender?.firstName || (sender as any)?.firstName) {
