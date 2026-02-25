@@ -124,12 +124,11 @@ const pluginPlugin: Plugin = {
               text += `<blockquote expandable>${installedText.trim()}</blockquote>\n\n`;
             }
             
-            text += `💡 点击下方按钮复制安装命令`;
+            // 底部提示：可复制的前缀
+            const installPrefix = `${prefix}plugin install `;
+            text += `💡 ${fmt.code(installPrefix)} ← 点击复制前缀，然后输入插件名`;
             
-            // 使用 replyHTML 的 options 参数添加 inline keyboard
-            const message = await ctx.replyHTML(text, {
-              replyMarkup: inlineKeyboard.length > 0 ? { inlineKeyboard } : undefined,
-            });
+            await ctx.replyHTML(text);
             break;
           }
 
