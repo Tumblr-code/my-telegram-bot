@@ -378,7 +378,8 @@ async function showMainHelp(msg: any, ctx: any, prefix: string) {
   commandsText += `${copyCmd("restart", prefix)} ${EMOJI.ARROW} 重启 Bot\n`;
   commandsText += `${copyCmd("logs", prefix)} ${EMOJI.ARROW} 查看日志\n`;
   commandsText += `${copyCmd("exec", prefix)} ${EMOJI.ARROW} 执行命令\n`;
-  commandsText += `${copyCmd("eval", prefix)} ${EMOJI.ARROW} 执行 JS 代码\n\n`;
+  commandsText += `${copyCmd("eval", prefix)} ${EMOJI.ARROW} 执行 JS 代码\n`;
+  commandsText += `${copyCmd("plugin", prefix)} ${EMOJI.ARROW} 管理插件\n\n`;
   
   // 扩展插件
   commandsText += fmt.bold(`${EMOJI.EXTEND} 扩展插件`) + "\n";
@@ -389,7 +390,6 @@ async function showMainHelp(msg: any, ctx: any, prefix: string) {
       commandsText += `<a href="tg://copy?text=${encodeURIComponent(plugin.name)}">${fmt.code(plugin.name)}</a> ${EMOJI.ARROW} ${shortDesc}\n`;
     }
   }
-  commandsText += `${copyCmd("plugin list", prefix)} ${EMOJI.ARROW} 管理插件`;
   
   text += `<blockquote expandable>${commandsText}</blockquote>`;
   text += `\n\n${EMOJI.COPY} <i>点击命令可复制，使用 ${copyCmd("help <命令名>", prefix)} 或 ${copyCmd("help <插件名>", prefix)} 查看详情</i>`;
