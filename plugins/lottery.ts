@@ -92,12 +92,22 @@ const saveConfig = () => db.set("lottery_config", CONFIG);
 const addLotteryRecord = (record: any): number | null => {
   try {
     const database = (db as any).getDB();
+    // 检查是否已存在相同 message_id 的记录
+    const existing = database.query(`SELECT id FROM lottery_records WHERE message_id = ?`).get(record.messageId);
+    if (existing) {
+      console.log(`[lottery] 记录已存在，跳过: message_id=${record.messageId}`);
+      return null;
+    }
     const result = database.run(
       `INSERT INTO lottery_records (message_id, keyword, prize, status, joined_at) VALUES (?, ?, ?, ?, ?)`,
       [record.messageId, record.keyword, record.prize || "", record.status, record.joinedAt]
     );
+    console.log(`[lottery] 记录添加成功: id=${result.lastInsertRowid}`);
     return result.lastInsertRowid as number;
-  } catch (error) { return null; }
+  } catch (error) { 
+    console.error(`[lottery] 记录添加失败:`, error);
+    return null; 
+  }
 };
 
 const findRecordByKeyword = (keyword: string): any | null => {
@@ -178,17 +188,22 @@ const extractKeyword = (msg: Api.Message): string | null => {
   const anyMsg = msg as any;
   const text = anyMsg.message || anyMsg.text || "";
   
+  console.log(`[lottery] 消息内容前200字符:`, text.substring(0, 200).replace(/\n/g, '\\n'));
+  
   // 优先匹配明确的关键词格式（防止匹配到代码格式的ID）
   // 1. 参与关键词：「xxx」 或 『xxx』
-  const match1 = text.match(/参与关键词\s*[：:]\s*[「『]([^」』\n]+)[」』]/);
+  const match1 = text.match(/参与关键词[：:]\s*[「『]([^」』\n]+)[」』]/);
+  console.log(`[lottery] 参与关键词匹配:`, match1?.[1]);
   if (match1) return match1[1].trim();
   
   // 2. 关键词：「xxx」 或 『xxx』
-  const match2 = text.match(/关键词\s*[：:]\s*[「『]([^」』\n]+)[」』]/);
+  const match2 = text.match(/关键词[：:]\s*[「『]([^」』\n]+)[」』]/);
+  console.log(`[lottery] 关键词匹配:`, match2?.[1]);
   if (match2) return match2[1].trim();
   
   // 3. 通用中文引号格式：「xxx」 或 『xxx』
   const match3 = text.match(/[「『]([^」』\n]{2,20})[」』]/);
+  console.log(`[lottery] 通用引号匹配:`, match3?.[1]);
   if (match3) return match3[1].trim();
   
   // 4. 其他文本格式
@@ -302,8 +317,15 @@ const messageHandler = async (msg: Api.Message, client: any): Promise<void> => {
       else if (anyMsg.peerId.chatId) chatId = anyMsg.peerId.chatId.toString();
     }
     // 检查配置是否已设置
-    if (!CONFIG.TARGET_GROUP_ID || !CONFIG.LOTTERY_BOT_ID) return;
-    if (chatId !== CONFIG.TARGET_GROUP_ID) return;
+    console.log(`[lottery] 收到消息 chatId: ${chatId}, 目标群组: ${CONFIG.TARGET_GROUP_ID}`);
+    if (!CONFIG.TARGET_GROUP_ID || !CONFIG.LOTTERY_BOT_ID) {
+      console.log(`[lottery] 配置未设置`);
+      return;
+    }
+    if (chatId !== CONFIG.TARGET_GROUP_ID) {
+      console.log(`[lottery] 群组不匹配`);
+      return;
+    }
     
     const text = anyMsg.message || anyMsg.text || "";
     const senderId = anyMsg.senderId?.toString() || anyMsg.fromId?.toString() || anyMsg._senderId?.toString();
@@ -334,23 +356,45 @@ const messageHandler = async (msg: Api.Message, client: any): Promise<void> => {
     }
     
     // 处理抽奖消息
-    if (senderId !== CONFIG.LOTTERY_BOT_ID) return;
-    if (!CONFIG.AUTO_JOIN) return;
+    console.log(`[lottery] 收到消息 from ${senderId}, 目标机器人 ${CONFIG.LOTTERY_BOT_ID}`);
+    if (senderId !== CONFIG.LOTTERY_BOT_ID) {
+      console.log(`[lottery] 发送者不匹配，跳过`);
+      return;
+    }
+    if (!CONFIG.AUTO_JOIN) {
+      console.log(`[lottery] 自动参与已关闭`);
+      return;
+    }
     
     const keyword = extractKeyword(msg);
-    if (!keyword) return;
-    if (isAlreadyJoined(anyMsg.id)) return;
+    console.log(`[lottery] 提取关键词: ${keyword}`);
+    if (!keyword) {
+      console.log(`[lottery] 未提取到关键词`);
+      return;
+    }
+    if (isAlreadyJoined(anyMsg.id)) {
+      console.log(`[lottery] 已参与过`);
+      return;
+    }
     
     const prize = extractPrize(text);
     const delay = Math.floor(Math.random() * (CONFIG.JOIN_DELAY_MAX - CONFIG.JOIN_DELAY_MIN) + CONFIG.JOIN_DELAY_MIN);
     
+    console.log(`[lottery] 准备参与抽奖，关键词: ${keyword}, 延迟: ${delay}ms`);
     setTimeout(async () => {
       try {
         const peer = anyMsg.peerId || anyMsg.chatId || anyMsg.chat?.id;
-        if (!peer) return;
+        if (!peer) {
+          console.log(`[lottery] 无法获取peer`);
+          return;
+        }
+        console.log(`[lottery] 发送关键词: ${keyword}`);
         await client.sendMessage(peer, { message: keyword });
         addLotteryRecord({ messageId: anyMsg.id, keyword, prize, status: "joined", joinedAt: Math.floor(Date.now() / 1000) });
-      } catch (error) {}
+        console.log(`[lottery] 参与成功: ${keyword}`);
+      } catch (error) {
+        console.error(`[lottery] 参与失败:`, error);
+      }
     }, delay);
   } catch (error) {}
 };
