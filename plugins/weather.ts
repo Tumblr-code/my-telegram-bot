@@ -295,9 +295,9 @@ const weatherPlugin: Plugin = {
 
   commands: {
     weather: {
-      description: "获取天气 (图片海报)",
+      description: "获取城市天气信息，生成精美海报图片",
       aliases: ["wt", "tq", "天气"],
-      examples: [".weather 北京", ".tq 上海"],
+      examples: ["weather 北京", "weather Shanghai", "tq 广州", "wt Tokyo"],
 
       handler: async (msg: any, args, ctx) => {
         try {

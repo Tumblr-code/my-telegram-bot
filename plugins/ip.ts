@@ -73,9 +73,9 @@ const ipPlugin: Plugin = {
 
   commands: {
     ip: {
-      description: "查询 IP/域名信息",
-      aliases: ["ipinfo", "iplookup"],
-      examples: ["ip 8.8.8.8"],
+      description: "查询 IP 地址或域名的地理位置、ISP 信息",
+      aliases: ["ipinfo", "iplookup", "ip查询"],
+      examples: ["ip 8.8.8.8", "ip google.com", "ip 2001:4860::8888"],
       handler: async (msg, args, ctx) => {
         try {
           let query = args.join(" ");

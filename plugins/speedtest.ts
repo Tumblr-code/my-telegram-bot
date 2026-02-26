@@ -80,9 +80,9 @@ const speedtestPlugin: Plugin = {
 
   commands: {
     speedtest: {
-      description: "测试网络速度",
-      aliases: ["st", "speed"],
-      examples: ["speedtest"],
+      description: "测试服务器网络速度（延迟和下载速度）",
+      aliases: ["st", "speed", "测速"],
+      examples: ["speedtest", "st"],
 
       handler: async (msg: any, args, ctx) => {
         try {

@@ -37,9 +37,9 @@ const crazy4Plugin: Plugin = {
 
   commands: {
     crazy4: {
-      description: "发送疯狂星期四文案",
-      aliases: ["crazy", "kfc", "v50"],
-      examples: ["crazy4"],
+      description: "发送疯狂星期四文案，随机 V50 段子",
+      aliases: ["crazy", "kfc", "v50", "星期四"],
+      examples: ["crazy4", "v50", "kfc"],
       handler: async (msg, args, ctx) => {
         // 显示准备中
         await (msg as any).edit({

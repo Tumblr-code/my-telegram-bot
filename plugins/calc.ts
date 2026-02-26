@@ -241,9 +241,9 @@ const calcPlugin: Plugin = {
 
   commands: {
     calc: {
-      description: "计算数学表达式",
-      aliases: ["calculator", "math"],
-      examples: ["calc 1+2", "calc (10+20)*3", "calc 100/4"],
+      description: "计算数学表达式，支持 + - * / 和括号",
+      aliases: ["calculator", "math", "计算"],
+      examples: ["calc 1+2", "calc (10+20)*3", "calc 100/4", "calc 3.14*2"],
       handler: async (msg, args, ctx) => {
         try {
           if (args.length === 0) {

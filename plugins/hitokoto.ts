@@ -26,9 +26,9 @@ const hitokotoPlugin: Plugin = {
 
   commands: {
     hitokoto: {
-      description: "获取随机一言",
+      description: "获取随机一言，支持动画、文学、哲学等分类",
       aliases: ["yiyan", "yy", "一言"],
-      examples: ["hitokoto"],
+      examples: ["hitokoto", "hitokoto 动画", "hitokoto 哲学"],
 
       handler: async (msg, args, ctx) => {
         try {

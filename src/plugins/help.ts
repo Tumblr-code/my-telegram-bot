@@ -23,19 +23,28 @@ const EMOJI = {
   MANAGE: "🎛️",
   ARROW: "→",
   DOT: "•",
+  COPY: "📋",
 };
+
+// 生成点击复制命令
+const copyCmd = (cmd: string, prefix: string = ".") => 
+  `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(prefix + cmd)}</a>`;
+
+// 生成点击复制文本（不带前缀）
+const copyText = (text: string) => 
+  `<a href="tg://copy?text=${encodeURIComponent(text)}">${fmt.code(text)}</a>`;
 
 const helpPlugin: Plugin = {
   name: "help",
-  version: "1.0.0",
-  description: "帮助系统和命令列表",
+  version: "1.1.0",
+  description: "帮助系统和命令列表，支持点击查看详细用法",
   author: "NexBot",
 
   commands: {
     help: {
-      description: "显示帮助信息",
-      aliases: ["h", "start"],
-      examples: ["help", "help ping", "help plugin"],
+      description: "显示帮助信息，支持 .help <命令> 查看详情",
+      aliases: ["h", "start", "帮助"],
+      examples: ["help", "help ping", "help lottery", "help ip"],
       handler: async (msg, args, ctx) => {
         const prefix = process.env.CMD_PREFIX || ".";
         
@@ -45,7 +54,7 @@ const helpPlugin: Plugin = {
           const cmdInfo = pluginManager.getCommand(cmdName);
           
           if (!cmdInfo) {
-            await ctx.reply(`${EMOJI.UNKNOWN} 未知命令: ${cmdName}`);
+            await ctx.replyHTML(`${EMOJI.UNKNOWN} <b>未知命令</b>: <code>${cmdName}</code>\n\n使用 ${copyCmd("help", prefix)} 查看所有命令`);
             return;
           }
 
@@ -53,57 +62,68 @@ const helpPlugin: Plugin = {
           const plugin = pluginManager.getPlugin(cmdInfo.plugin);
           const isFromCmdHandlers = pluginManager.isCmdHandlerCommand(cmdName);
           
-          // 构建详细信息（放入折叠块）
+          // 构建详细信息
           let detailText = "";
           
-          detailText += `${EMOJI.INFO} 描述: ${escapeHTML(def.description)}\n`;
-          detailText += `${EMOJI.PLUGIN} 来源插件: ${cmdInfo.plugin}\n`;
+          // 描述
+          detailText += `${EMOJI.INFO} <b>描述:</b> ${escapeHTML(def.description)}\n`;
+          detailText += `${EMOJI.PLUGIN} <b>来源插件:</b> ${cmdInfo.plugin}\n`;
           
-          // 如果命令来自 cmdHandlers，显示更详细的信息
+          // 别名
+          if (def.aliases && def.aliases.length > 0) {
+            detailText += `\n${EMOJI.ALIAS} <b>别名:</b> `;
+            detailText += def.aliases.map((a: string) => copyCmd(a, prefix)).join(" ");
+            detailText += "\n";
+          }
+          
+          // 使用示例（带点击复制）
+          if (def.examples && def.examples.length > 0) {
+            detailText += `\n${EMOJI.EXAMPLE} <b>使用示例:</b>\n`;
+            for (const ex of def.examples) {
+              detailText += `  ${EMOJI.ARROW} ${copyCmd(ex, prefix)}\n`;
+            }
+          }
+          
+          // 如果命令来自 cmdHandlers，显示该插件的所有命令
           if (isFromCmdHandlers && plugin) {
-            detailText += `\n${EMOJI.COMMAND} 该插件支持以下命令:\n`;
+            detailText += `\n${EMOJI.COMMAND} <b>该插件所有命令:</b>\n`;
             const pluginCmds = pluginManager.getPluginCommands(cmdInfo.plugin);
             
             if (pluginCmds.cmdHandlers.length > 0) {
-              detailText += `${EMOJI.DOT} 管理命令: ${pluginCmds.cmdHandlers.join(", ")}\n`;
+              detailText += `  ${EMOJI.DOT} `;
+              detailText += pluginCmds.cmdHandlers.map((c: string) => copyCmd(c, prefix)).join(" ");
+              detailText += "\n";
             }
             if (pluginCmds.commands.length > 0) {
-              detailText += `${EMOJI.DOT} 普通命令: ${pluginCmds.commands.join(", ")}\n`;
-            }
-            
-            // 显示插件描述
-            if (plugin.description) {
-              detailText += `\n${EMOJI.INFO} 插件说明:\n`;
-              detailText += escapeHTML(plugin.description) + "\n";
+              detailText += `  ${EMOJI.DOT} `;
+              detailText += pluginCmds.commands.map((c: string) => copyCmd(c, prefix)).join(" ");
+              detailText += "\n";
             }
           }
           
-          if (def.aliases && def.aliases.length > 0) {
-            detailText += `\n${EMOJI.ALIAS} 别名: ${def.aliases.join(", ")}\n`;
-          }
-          
-          if (def.examples && def.examples.length > 0) {
-            detailText += `\n${EMOJI.EXAMPLE} 示例:\n`;
-            for (const ex of def.examples) {
-              detailText += `  ${EMOJI.ARROW} ${prefix + ex}\n`;
-            }
+          // 插件描述
+          if (plugin?.description) {
+            detailText += `\n${EMOJI.INFO} <b>插件说明:</b>\n`;
+            detailText += escapeHTML(plugin.description) + "\n";
           }
           
           // 构建最终消息
           let text = fmt.bold(`${EMOJI.BOOK} 命令帮助: ${cmdName}`) + "\n\n";
           text += `<blockquote expandable>${detailText.trim()}</blockquote>`;
+          
+          // 添加提示
+          text += `\n${EMOJI.COPY} 点击命令即可复制`;
 
           await ctx.replyHTML(text);
         } else {
-          // 显示主帮助 - 简约风格
+          // 显示主帮助
           const botName = process.env.BOT_NAME || "NexBot";
-          const copyCmd = (cmd: string, desc: string) => `<a href="tg://copy?text=${encodeURIComponent(prefix + cmd)}">${fmt.code(prefix + cmd)}</a> ${EMOJI.ARROW} ${desc}`;
           
           let text = fmt.bold(`${EMOJI.BOT} ${botName}`) + ` ${EMOJI.VERSION} ${fmt.italic("v" + VERSION)}\n\n`;
           
           // 简约介绍
           text += `${EMOJI.SPEED} 极速 · ${EMOJI.PLUGIN} 插件化 · ${EMOJI.SHIELD} 安全\n`;
-          text += `前缀 ${fmt.code(prefix)} · 帮助 ${copyCmd("help <命令>", "详情")}\n\n`;
+          text += `前缀 ${fmt.code(prefix)} · 点击查看详情 ${copyCmd("help <命令>", prefix)}\n\n`;
           
           // 获取已安装插件（排除内置插件）
           const builtinNames = new Set(['help', 'plugin', 'debug', 'exec', 'sysinfo']);
@@ -111,34 +131,42 @@ const helpPlugin: Plugin = {
           
           // 分类命令列表
           let commandsText = "";
-          commandsText += fmt.bold(`${EMOJI.BASIC} 基础`) + "\n";
-          commandsText += `${copyCmd("ping", "延迟")} ${copyCmd("id", "信息")} ${copyCmd("echo", "回声")}\n\n`;
-          commandsText += fmt.bold(`${EMOJI.SYSTEM} 系统`) + "\n";
-          commandsText += `${copyCmd("sysinfo", "状态")} ${copyCmd("health", "健康")} ${copyCmd("db", "数据")}\n\n`;
           
-          // 扩展插件 - 显示已安装的插件
-          commandsText += fmt.bold(`${EMOJI.EXTEND} 扩展`) + "\n";
+          // 基础命令
+          commandsText += fmt.bold(`${EMOJI.BASIC} 基础命令`) + "\n";
+          commandsText += `${copyCmd("ping", prefix)} ${EMOJI.ARROW} 测试延迟\n`;
+          commandsText += `${copyCmd("id", prefix)} ${EMOJI.ARROW} 查看聊天信息\n`;
+          commandsText += `${copyCmd("echo", prefix)} ${EMOJI.ARROW} 回声测试\n\n`;
+          
+          // 系统命令
+          commandsText += fmt.bold(`${EMOJI.SYSTEM} 系统命令`) + "\n";
+          commandsText += `${copyCmd("sysinfo", prefix)} ${EMOJI.ARROW} 系统状态\n`;
+          commandsText += `${copyCmd("health", prefix)} ${EMOJI.ARROW} 健康检查\n`;
+          commandsText += `${copyCmd("db", prefix)} ${EMOJI.ARROW} 数据库信息\n`;
+          commandsText += `${copyCmd("update", prefix)} ${EMOJI.ARROW} 更新代码\n`;
+          commandsText += `${copyCmd("status", prefix)} ${EMOJI.ARROW} 查看状态\n\n`;
+          
+          // 扩展插件命令
+          commandsText += fmt.bold(`${EMOJI.EXTEND} 扩展插件`) + "\n";
           if (installedPlugins.length > 0) {
-            for (const plugin of installedPlugins) {
-              // 获取插件的命令
+            for (const plugin of installedPlugins.slice(0, 8)) {
               const cmds: string[] = [];
               if (plugin.commands) cmds.push(...Object.keys(plugin.commands));
               if (plugin.cmdHandlers) cmds.push(...Object.keys(plugin.cmdHandlers));
-              
-              // 取第一个命令作为代表
               const mainCmd = cmds[0] || plugin.name;
-              // 使用工具函数清理描述
-              const shortDesc = escapeHTML(cleanPluginDescription(plugin.description, 4));
-              
-              commandsText += `${copyCmd(mainCmd, shortDesc)} `;
+              const shortDesc = escapeHTML(cleanPluginDescription(plugin.description, 3));
+              commandsText += `${copyCmd(mainCmd, prefix)} ${EMOJI.ARROW} ${shortDesc}\n`;
             }
-            // 添加 plugin list
-            commandsText += `${copyCmd("plugin list", "管理")}`;
-          } else {
-            commandsText += `${copyCmd("plugin list", "查看可用插件")}`;
+            if (installedPlugins.length > 8) {
+              commandsText += `... 还有 ${installedPlugins.length - 8} 个插件\n`;
+            }
           }
+          commandsText += `${copyCmd("plugin list", prefix)} ${EMOJI.ARROW} 管理插件`;
           
           text += `<blockquote expandable>${commandsText}</blockquote>`;
+          
+          // 添加提示
+          text += `\n\n${EMOJI.COPY} <i>点击命令可复制，使用 ${copyCmd("help <命令名>", prefix)} 查看详细用法</i>`;
           
           await ctx.replyHTML(text);
         }
