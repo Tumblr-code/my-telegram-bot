@@ -109,7 +109,7 @@ const pluginPlugin: Plugin = {
                 // 构建安装命令
                 const installCmd = `${prefix}plugin install ${plugin.name}`;
                 // 清理描述防止显示异常
-                const cleanDesc = cleanPluginDescription(plugin.description, 20);
+                const cleanDesc = cleanPluginDescription(plugin.description);
                 // 直接显示插件名（不带链接），描述紧随其后
                 availableText += `${EMOJI.DOT} ${fmt.code(plugin.name)} ${EMOJI.ARROW} ${escapeHTML(cleanDesc)}\n`;
                 

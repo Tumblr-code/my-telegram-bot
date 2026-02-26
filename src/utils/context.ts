@@ -31,24 +31,39 @@ export function createContext(
     async reply(text: string, options: ReplyOptions = {}): Promise<Api.Message> {
       // 使用 chat 对象或 chatId
       const target = chat || chatId;
-      return await client.sendMessage(target, {
+      const sendOptions: any = {
         message: text,
-        replyTo: options.replyToMessageId ? Number(options.replyToMessageId) : Number(messageId),
         parseMode: options.parseMode,
         silent: options.silent,
         linkPreview: options.disableWebPagePreview === false,
-      });
+      };
+      // 只有显式设置 replyToMessageId 为数值时才引用回复
+      if (typeof options.replyToMessageId === 'number') {
+        sendOptions.replyTo = Number(options.replyToMessageId);
+      } else if (options.replyToMessageId !== null) {
+        // 默认引用原消息
+        sendOptions.replyTo = Number(messageId);
+      }
+      // replyToMessageId === null 时不设置 replyTo，不引用
+      return await client.sendMessage(target, sendOptions);
     },
 
     async replyHTML(html: string, options: ReplyOptions = {}): Promise<Api.Message> {
       const target = chat || chatId;
       const sendOptions: any = {
         message: html,
-        replyTo: options.replyToMessageId ? Number(options.replyToMessageId) : Number(messageId),
         parseMode: "html",
         silent: options.silent,
         linkPreview: options.disableWebPagePreview === false,
       };
+      // 只有显式设置 replyToMessageId 为数值时才引用回复
+      if (typeof options.replyToMessageId === 'number') {
+        sendOptions.replyTo = Number(options.replyToMessageId);
+      } else if (options.replyToMessageId !== null) {
+        // 默认引用原消息
+        sendOptions.replyTo = Number(messageId);
+      }
+      // replyToMessageId === null 时不设置 replyTo，不引用
       if (options.replyMarkup) {
         sendOptions.buttons = options.replyMarkup.inlineKeyboard || options.replyMarkup;
       }

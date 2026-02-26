@@ -10,20 +10,27 @@ export function sleep(ms: number): Promise<void> {
 }
 
 /**
- * 清理插件描述，移除 emoji 和特殊字符，用于帮助显示
+ * 清理插件描述，用于帮助显示
+ * 保留中英文数字、标点符号和空格，只移除 emoji 和特殊格式字符
  */
-export function cleanPluginDescription(description: string | undefined, maxLength: number = 4): string {
+export function cleanPluginDescription(description: string | undefined, maxLength: number = 0): string {
   if (!description) return '插件';
   
   // 取第一行
   let desc = description.split('\n')[0];
   
-  // 只保留中英文和数字
-  desc = desc.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').trim();
+  // 移除 emoji（Unicode emoji 范围）
+  desc = desc.replace(/[\u{1F600}-\u{1F64F}]/gu, '')  // 表情符号
+             .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')  // 符号和象形文字
+             .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')  // 交通和地图符号
+             .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '')  // 国旗
+             .replace(/[\u{2600}-\u{26FF}]/gu, '')     // 杂项符号
+             .replace(/[\u{2700}-\u{27BF}]/gu, '')     // 装饰符号
+             .trim();
   
-  // 限制长度
-  if (desc.length > maxLength) {
-    desc = desc.slice(0, maxLength);
+  // 限制长度（仅在 maxLength > 0 时生效）
+  if (maxLength > 0 && desc.length > maxLength) {
+    desc = desc.slice(0, maxLength) + '...';
   }
   
   return desc || '插件';

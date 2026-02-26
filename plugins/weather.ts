@@ -290,7 +290,7 @@ function generateWeatherPoster(
 const weatherPlugin: Plugin = {
   name: "weather",
   version: "2.0.0",
-  description: "Weather with poster image",
+  description: "天气查询 - 获取城市天气信息并生成精美海报图片",
   author: "NexBot",
 
   commands: {

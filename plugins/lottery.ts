@@ -327,7 +327,10 @@ const lotteryPlugin: Plugin = {
         const stats = getStats();
         
         if (records.length === 0) {
-          await ctx.replyHTML(`${EMOJI.LOTTERY} <b>暂无抽奖记录</b>\n\n使用 ${copyCmd("lottery", prefix)} 查看记录`);
+          await (msg as any).edit({
+            text: `${EMOJI.LOTTERY} <b>暂无抽奖记录</b>\n\n使用 ${copyCmd("lottery", prefix)} 查看记录`,
+            parseMode: "html",
+          });
           return;
         }
         
@@ -343,7 +346,7 @@ const lotteryPlugin: Plugin = {
         }
         
         if (records.length > 10) text += `... 还有 ${records.length - 10} 条记录`;
-        await ctx.replyHTML(text);
+        await (msg as any).edit({ text, parseMode: "html" });
       },
     },
 
@@ -363,7 +366,7 @@ const lotteryPlugin: Plugin = {
                      `💰 中奖率: ${winRate}%\n\n` +
                      `${EMOJI.GROUP} 监听群组: <code>${CONFIG.TARGET_GROUP_ID}</code>\n` +
                      `${EMOJI.BOT} 抽奖机器人: <code>${CONFIG.LOTTERY_BOT_ID}</code>`;
-        await ctx.replyHTML(text);
+        await (msg as any).edit({ text, parseMode: "html" });
       },
     },
 
@@ -379,7 +382,7 @@ const lotteryPlugin: Plugin = {
                      `${EMOJI.DELAY} 延迟范围: ${CONFIG.JOIN_DELAY_MIN}-${CONFIG.JOIN_DELAY_MAX}ms\n` +
                      `${EMOJI.AUTO} 自动参与: ${CONFIG.AUTO_JOIN ? "✅ 开启" : "❌ 关闭"}\n` +
                      `${EMOJI.NOTIFY} 中奖通知: ${CONFIG.NOTIFY_ON_WIN ? "✅ 开启" : "❌ 关闭"}`;
-        await ctx.replyHTML(text);
+        await (msg as any).edit({ text, parseMode: "html" });
       },
     },
 
@@ -403,7 +406,7 @@ const lotteryPlugin: Plugin = {
                       `<b>示例:</b>\n` +
                       `${copyCmd("lottset auto off", prefix)}\n` +
                       `${copyCmd("lottset delay_min 2000", prefix)}`;
-          await ctx.replyHTML(help);
+          await (msg as any).edit({ text: help, parseMode: "html" });
           return;
         }
         
@@ -419,10 +422,10 @@ const lotteryPlugin: Plugin = {
           case "auto": CONFIG.AUTO_JOIN = value === "on" || value === "true"; saveConfig(); break;
           case "notify_win": CONFIG.NOTIFY_ON_WIN = value === "on" || value === "true"; saveConfig(); break;
           default:
-            await ctx.replyHTML(`${EMOJI.ERROR} 未知配置项: ${key}`);
+            await (msg as any).edit({ text: `${EMOJI.ERROR} 未知配置项: ${key}`, parseMode: "html" });
             return;
         }
-        await ctx.replyHTML(`${EMOJI.SUCCESS} 配置已更新`);
+        await (msg as any).edit({ text: `${EMOJI.SUCCESS} 配置已更新`, parseMode: "html" });
       },
     },
 
@@ -433,7 +436,7 @@ const lotteryPlugin: Plugin = {
       handler: async (msg, args, ctx) => {
         CONFIG = { ...DEFAULT_CONFIG };
         saveConfig();
-        await ctx.replyHTML(`${EMOJI.SUCCESS} 配置已重置为默认值`);
+        await (msg as any).edit({ text: `${EMOJI.SUCCESS} 配置已重置为默认值`, parseMode: "html" });
       },
     },
   },

@@ -27,7 +27,7 @@ export interface CommandContext {
 // 回复选项
 export interface ReplyOptions {
   parseMode?: "html" | "markdown" | "markdownv2";
-  replyToMessageId?: number;
+  replyToMessageId?: number | null;
   disableWebPagePreview?: boolean;
   silent?: boolean;
   replyMarkup?: any;
