@@ -32,8 +32,8 @@ const EMOJI = {
 
 // 默认配置
 const DEFAULT_CONFIG = {
-  TARGET_GROUP_ID: "2129702425",
-  LOTTERY_BOT_ID: "6461022460",
+  TARGET_GROUP_ID: "",
+  LOTTERY_BOT_ID: "",
   NOTIFY_USER_ID: "",
   JOIN_DELAY_MIN: 1000,
   JOIN_DELAY_MAX: 5000,
@@ -197,6 +197,18 @@ const extractKeyword = (msg: Api.Message): string | null => {
   const match4 = text.match(/[`"']([^`"'\n]{2,20})[`"']/);
   if (match4) return match4[1].trim();
   
+  // 新格式：参与关键词：「xxx」 或 『xxx』
+  const match5 = text.match(/参与关键词[：:]\s*[「『]([^」』\n]+)[」』]/);
+  if (match5) return match5[1].trim();
+  
+  // 新格式：关键词：「xxx」 或 『xxx』
+  const match6 = text.match(/关键词[：:]\s*[「『]([^」』\n]+)[」』]/);
+  if (match6) return match6[1].trim();
+  
+  // 通用中文引号格式：「xxx」 或 『xxx』
+  const match7 = text.match(/[「『]([^」』\n]{2,20})[」』]/);
+  if (match7) return match7[1].trim();
+  
   return null;
 };
 
@@ -252,6 +264,8 @@ const messageHandler = async (msg: Api.Message, client: any): Promise<void> => {
       if (anyMsg.peerId.channelId) chatId = anyMsg.peerId.channelId.toString();
       else if (anyMsg.peerId.chatId) chatId = anyMsg.peerId.chatId.toString();
     }
+    // 检查配置是否已设置
+    if (!CONFIG.TARGET_GROUP_ID || !CONFIG.LOTTERY_BOT_ID) return;
     if (chatId !== CONFIG.TARGET_GROUP_ID) return;
     
     const text = anyMsg.message || anyMsg.text || "";
@@ -364,8 +378,8 @@ const lotteryPlugin: Plugin = {
                      `${EMOJI.WIN} 中奖: ${stats.won} 次\n` +
                      `${EMOJI.LOST} 未中奖: ${stats.lost} 次\n` +
                      `💰 中奖率: ${winRate}%\n\n` +
-                     `${EMOJI.GROUP} 监听群组: <code>${CONFIG.TARGET_GROUP_ID}</code>\n` +
-                     `${EMOJI.BOT} 抽奖机器人: <code>${CONFIG.LOTTERY_BOT_ID}</code>`;
+                     `${EMOJI.GROUP} 监听群组: <code>${CONFIG.TARGET_GROUP_ID || "未设置"}</code>\n` +
+                     `${EMOJI.BOT} 抽奖机器人: <code>${CONFIG.LOTTERY_BOT_ID || "未设置"}</code>`;
         await (msg as any).edit({ text, parseMode: "html" });
       },
     },
@@ -376,8 +390,8 @@ const lotteryPlugin: Plugin = {
       examples: ["lottcfg"],
       handler: async (msg, args, ctx) => {
         const text = `${EMOJI.LOTTERY} <b>抽奖插件配置</b>\n\n` +
-                     `${EMOJI.GROUP} 监听群组: <code>${CONFIG.TARGET_GROUP_ID}</code>\n` +
-                     `${EMOJI.BOT} 抽奖机器人: <code>${CONFIG.LOTTERY_BOT_ID}</code>\n` +
+                     `${EMOJI.GROUP} 监听群组: <code>${CONFIG.TARGET_GROUP_ID || "未设置"}</code>\n` +
+                     `${EMOJI.BOT} 抽奖机器人: <code>${CONFIG.LOTTERY_BOT_ID || "未设置"}</code>\n` +
                      `${EMOJI.NOTIFY} 通知用户: <code>${CONFIG.NOTIFY_USER_ID || "未设置"}</code>\n` +
                      `${EMOJI.DELAY} 延迟范围: ${CONFIG.JOIN_DELAY_MIN}-${CONFIG.JOIN_DELAY_MAX}ms\n` +
                      `${EMOJI.AUTO} 自动参与: ${CONFIG.AUTO_JOIN ? "✅ 开启" : "❌ 关闭"}\n` +
