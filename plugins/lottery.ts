@@ -300,7 +300,7 @@ const messageHandler = async (msg: Api.Message, client: any): Promise<void> => {
       try {
         const peer = anyMsg.peerId || anyMsg.chatId || anyMsg.chat?.id;
         if (!peer) return;
-        await client.sendMessage(peer, { message: keyword, replyTo: anyMsg.id });
+        await client.sendMessage(peer, { message: keyword });
         addLotteryRecord({ messageId: anyMsg.id, keyword, prize, status: "joined", joinedAt: Math.floor(Date.now() / 1000) });
       } catch (error) {}
     }, delay);
