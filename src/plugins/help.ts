@@ -99,21 +99,21 @@ const helpPlugin: Plugin = {
         if (args.length > 0) {
           const query = args[0].toLowerCase();
           
-          // 首先尝试查找命令
-          const cmdInfo = pluginManager.getCommand(query);
-          
-          if (cmdInfo) {
-            // 显示单个命令帮助
-            await showCommandHelp(ctx, query, cmdInfo, prefix);
-            return;
-          }
-          
-          // 如果不是命令，尝试查找插件
+          // 首先尝试查找插件（优先显示插件帮助）
           const plugin = pluginManager.getPlugin(query);
           
           if (plugin) {
             // 显示插件所有命令
             await showPluginHelp(ctx, query, plugin, prefix);
+            return;
+          }
+          
+          // 如果不是插件，尝试查找命令
+          const cmdInfo = pluginManager.getCommand(query);
+          
+          if (cmdInfo) {
+            // 显示单个命令帮助
+            await showCommandHelp(ctx, query, cmdInfo, prefix);
             return;
           }
           
