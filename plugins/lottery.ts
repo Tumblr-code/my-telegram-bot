@@ -366,6 +366,15 @@ const messageHandler = async (msg: Api.Message, client: any): Promise<void> => {
       return;
     }
     
+    // 检查是否是有效的抽奖消息（包含关键词或参与设置）
+    if (!text.includes("抽奖") || (!text.includes("关键词") && !text.includes("参与"))) {
+      console.log(`[lottery] 不是抽奖消息，跳过`);
+      return;
+    }
+    
+    // 打印消息实体信息
+    console.log(`[lottery] 消息实体:`, JSON.stringify(anyMsg.entities?.map((e: any) => ({className: e.className, offset: e.offset, length: e.length, text: text.substring(e.offset, e.offset + e.length)}))));
+    
     const keyword = extractKeyword(msg);
     console.log(`[lottery] 提取关键词: ${keyword}`);
     if (!keyword) {
