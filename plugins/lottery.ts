@@ -81,7 +81,7 @@ const loadGroupConfigs = () => {
   try {
     const database = (db as any).getDB();
     const rows = database.query(`SELECT group_id, bot_id FROM lottery_groups`).all() as any[];
-    GROUP_CONFIGS = rows.map(r => ({ groupId: r.group_id, botId: r.botId }));
+    GROUP_CONFIGS = rows.map(r => ({ groupId: r.group_id, botId: r.bot_id }));
     console.log(`[lottery] 加载了 ${GROUP_CONFIGS.length} 个群组配置`);
   } catch (e) {}
 };
