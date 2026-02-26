@@ -413,7 +413,7 @@ const lotteryPlugin: Plugin = {
                       `<b>配置项:</b>\n` +
                       `${EMOJI.GROUP} <code>group</code> ${EMOJI.ARROW} 监听群组ID\n` +
                       `${EMOJI.BOT} <code>bot</code> ${EMOJI.ARROW} 抽奖机器人ID\n` +
-                      `${EMOJI.NOTIFY} <code>notify</code> ${EMOJI.ARROW} 通知用户ID\n` +
+                      `${EMOJI.NOTIFY} <code>notify</code> ${EMOJI.ARROW} 通知用户ID (传 default 恢复默认)\n` +
                       `${EMOJI.DELAY} <code>delay_min</code> ${EMOJI.ARROW} 最小延迟(ms)\n` +
                       `${EMOJI.DELAY} <code>delay_max</code> ${EMOJI.ARROW} 最大延迟(ms)\n` +
                       `${EMOJI.AUTO} <code>auto</code> ${EMOJI.ARROW} 自动参与 (on/off)\n` +
@@ -431,7 +431,14 @@ const lotteryPlugin: Plugin = {
         switch (key) {
           case "group": CONFIG.TARGET_GROUP_ID = value; saveConfig(); break;
           case "bot": CONFIG.LOTTERY_BOT_ID = value; saveConfig(); break;
-          case "notify": CONFIG.NOTIFY_USER_ID = value; saveConfig(); break;
+          case "notify": 
+            if (value === "default" || value === "reset") {
+              CONFIG.NOTIFY_USER_ID = "";
+            } else {
+              CONFIG.NOTIFY_USER_ID = value;
+            }
+            saveConfig(); 
+            break;
           case "delay_min": CONFIG.JOIN_DELAY_MIN = parseInt(value) || 1000; saveConfig(); break;
           case "delay_max": CONFIG.JOIN_DELAY_MAX = parseInt(value) || 5000; saveConfig(); break;
           case "auto": CONFIG.AUTO_JOIN = value === "on" || value === "true"; saveConfig(); break;
