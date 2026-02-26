@@ -49,8 +49,11 @@ const COMMAND_DESCRIPTIONS: Record<string, string> = {
   "status": "查看系统状态、Git版本和运行时间",
   "logs": "查看最近日志（默认30行，可指定数量）",
   "sys": "执行 Shell 命令（带安全检查，仅限安全命令）",
-  "exec": "执行 Shell 命令（sys 别名）",
-  "shell": "执行 Shell 命令（sys 别名）",
+  "exec": "执行 Shell 命令（带安全检查）",
+  "shell": "执行 Shell 命令（exec 别名）",
+  "sh": "执行 Shell 命令（exec 别名）",
+  "cmd": "执行 Shell 命令（exec 别名）",
+  "sys": "执行 Shell 命令（exec 别名）",
   "eval": "执行 JavaScript 代码（开发者调试）",
   "cache": "查看缓存命中率和统计信息",
   "ratelimit": "查看限流统计和触发记录",
@@ -367,10 +370,15 @@ async function showMainHelp(msg: any, ctx: any, prefix: string) {
   commandsText += `${copyCmd("id", prefix)} ${EMOJI.ARROW} 查看聊天信息\n`;
   commandsText += `${copyCmd("echo", prefix)} ${EMOJI.ARROW} 回声测试\n\n`;
   
-  // 系统命令（仅内置命令）
+  // 系统命令（内置命令）
   commandsText += fmt.bold(`${EMOJI.SYSTEM} 系统命令`) + "\n";
   commandsText += `${copyCmd("sysinfo", prefix)} ${EMOJI.ARROW} 系统状态\n`;
-  commandsText += `${copyCmd("exec", prefix)} ${EMOJI.ARROW} 执行命令\n\n`;
+  commandsText += `${copyCmd("update", prefix)} ${EMOJI.ARROW} 更新代码\n`;
+  commandsText += `${copyCmd("upgrade", prefix)} ${EMOJI.ARROW} 升级依赖\n`;
+  commandsText += `${copyCmd("restart", prefix)} ${EMOJI.ARROW} 重启 Bot\n`;
+  commandsText += `${copyCmd("logs", prefix)} ${EMOJI.ARROW} 查看日志\n`;
+  commandsText += `${copyCmd("exec", prefix)} ${EMOJI.ARROW} 执行命令\n`;
+  commandsText += `${copyCmd("eval", prefix)} ${EMOJI.ARROW} 执行 JS 代码\n\n`;
   
   // 扩展插件
   commandsText += fmt.bold(`${EMOJI.EXTEND} 扩展插件`) + "\n";
