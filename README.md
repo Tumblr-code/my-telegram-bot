@@ -1,5 +1,6 @@
 # 🤖 NexBot
 
+[![Version](https://img.shields.io/badge/Version-1.5.0-blue.svg)](https://github.com/Tumblr-code/NexBot/releases)
 [![CI](https://github.com/Tumblr-code/NexBot/actions/workflows/ci.yml/badge.svg)](https://github.com/Tumblr-code/NexBot/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)

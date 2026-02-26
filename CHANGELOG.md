@@ -5,6 +5,40 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.5.0] - 2026-02-26
+
+### 🎉 第一个稳定版发布
+
+### Added
+
+- **完整插件生态**: 内置插件 + 7个扩展插件
+  - `sysinfo` - 系统信息监控（内置）
+  - `help` - 帮助系统（内置）
+  - `exec` - 安全命令执行（内置）
+  - `debug` - 调试工具（内置）
+  - `plugin` - 插件管理器（内置）
+  - `speedtest` - 网速测试
+  - `pansou` - 网盘搜索
+  - `lottery` - 自动抽奖 v2.1
+  - `weather` - 天气查询
+  - `hitokoto` - 随机一言
+  - `privateguard` - 私聊保护
+- **自动删除功能**: 所有命令消息 60秒后自动清理
+- **消息编辑模式**: 命令直接编辑原消息，不发送新消息
+- **点击复制**: 帮助系统中所有命令和插件名支持点击复制
+
+### Changed
+
+- 将 system 插件功能移植到内置 sysinfo 插件
+- 统一所有命令使用 ctx.edit/editHTML
+- 优化 help 显示结构
+
+### Fixed
+
+- 修复 lottery 插件多群组支持
+- 修复数据库字段名 bug
+- 修复重复键定义问题
+
 ## [1.4.1] - 2026-02-26
 
 ### Fixed
