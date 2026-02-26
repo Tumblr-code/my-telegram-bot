@@ -384,12 +384,8 @@ async function showMainHelp(msg: any, ctx: any, prefix: string) {
   commandsText += fmt.bold(`${EMOJI.EXTEND} 扩展插件`) + "\n";
   if (installedPlugins.length > 0) {
     for (const plugin of installedPlugins) {
-      const cmds: string[] = [];
-      if (plugin.commands) cmds.push(...Object.keys(plugin.commands));
-      if (plugin.cmdHandlers) cmds.push(...Object.keys(plugin.cmdHandlers));
-      const mainCmd = cmds[0] || plugin.name;
       const shortDesc = escapeHTML(cleanPluginDescription(plugin.description));
-      commandsText += `${copyCmd(mainCmd, prefix)} ${EMOJI.ARROW} ${shortDesc}\n`;
+      commandsText += `${plugin.name} ${EMOJI.ARROW} ${shortDesc}\n`;
     }
   }
   commandsText += `${copyCmd("plugin list", prefix)} ${EMOJI.ARROW} 管理插件`;
