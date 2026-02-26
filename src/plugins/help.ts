@@ -48,7 +48,6 @@ const COMMAND_DESCRIPTIONS: Record<string, string> = {
   "restart": "重启 Bot 服务（重载所有组件）",
   "status": "查看系统状态、Git版本和运行时间",
   "logs": "查看最近日志（默认30行，可指定数量）",
-  "sys": "执行 Shell 命令（带安全检查，仅限安全命令）",
   "exec": "执行 Shell 命令（带安全检查）",
   "shell": "执行 Shell 命令（exec 别名）",
   "sh": "执行 Shell 命令（exec 别名）",
