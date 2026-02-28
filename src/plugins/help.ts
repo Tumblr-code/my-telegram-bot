@@ -336,6 +336,24 @@ async function showPluginHelp(msg: any, ctx: any, pluginName: string, plugin: an
       
       detailText += "\n";
     }
+    
+    // 对于 cmdHandlers 格式的插件，显示子命令列表
+    if (cmdHandlers.length > 0) {
+      detailText += fmt.bold(`${EMOJI.LIST} 子命令列表:`) + "\n";
+      detailText += `<blockquote expandable>\n`;
+      
+      // 从 COMMAND_DESCRIPTIONS 中查找该插件相关的子命令
+      for (const [cmdName, desc] of Object.entries(COMMAND_DESCRIPTIONS)) {
+        // 检查是否是这个插件的子命令（以插件命令开头）
+        for (const handlerCmd of cmdHandlers) {
+          if (cmdName.startsWith(handlerCmd) && cmdName !== handlerCmd) {
+            detailText += `${EMOJI.DOT} ${copyCmd(cmdName, prefix)} ${EMOJI.ARROW} ${desc}\n`;
+          }
+        }
+      }
+      
+      detailText += `</blockquote>\n\n`;
+    }
   }
   
   // 构建最终消息
