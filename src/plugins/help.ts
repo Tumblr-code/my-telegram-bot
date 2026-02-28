@@ -88,6 +88,47 @@ const COMMAND_DESCRIPTIONS: Record<string, string> = {
   "aicollapse": "设置消息自动折叠阈值",
   "aistat": "查看 AI 使用统计（aistats 别名）",
   
+  // AI config 子命令详细说明
+  "aiconfigstatus": "查看服务商配置状态",
+  "aiconfigadd": "添加服务商配置",
+  "aiconfigupdate": "更新服务商配置",
+  "aiconfigremove": "删除服务商配置",
+  "aiconfiglist": "列出所有服务商",
+  "aiconfigmodel": "列出服务商支持的模型",
+  
+  // AI model 子命令详细说明
+  "aimodellist": "查看当前模型配置",
+  "aimodeldefault": "清空模型设置恢复默认",
+  "aimodelauto": "自动分配最佳模型",
+  "aimodelchat": "设置对话模型",
+  "aimodelsearch": "设置搜索模型",
+  "aimodelimage": "设置图片生成模型",
+  "aimodeltts": "设置语音合成模型",
+  
+  // AI context 子命令详细说明
+  "aicontexton": "开启上下文记忆",
+  "aicontextoff": "关闭上下文记忆",
+  "aicontextshow": "查看当前上下文",
+  "aicontextdel": "删除上下文",
+  
+  // AI collapse 子命令详细说明
+  "aicollapseon": "开启长消息折叠",
+  "aicollapseoff": "关闭长消息折叠",
+  "aicollapselimit": "设置折叠字数限制",
+  "aicollapselist": "查看折叠设置",
+  
+  // AI telegraph 子命令详细说明
+  "aitelegraphon": "开启 Telegraph 发布",
+  "aitelegraphoff": "关闭 Telegraph 发布",
+  "aitelegraphlimit": "设置发布字数限制",
+  "aitelegraphlist": "查看已发布文章",
+  "aitelegraphdel": "删除已发布文章",
+  
+  // AI prompt 子命令详细说明
+  "aipromptset": "设置全局 Prompt",
+  "aipromptclear": "清除全局 Prompt",
+  "aipromptshow": "查看当前 Prompt",
+  
   // 网盘搜索插件
   "pan": "网盘搜索，结果以 Telegraph 页面展示",
   "pansou": "网盘搜索（pan 别名）",
@@ -351,14 +392,29 @@ async function showPluginHelp(msg: any, ctx: any, pluginName: string, plugin: an
       detailText += fmt.bold(`${EMOJI.LIST} 子命令列表:`) + "\n";
       detailText += `<blockquote expandable>\n`;
       
-      // 从 COMMAND_DESCRIPTIONS 中查找该插件相关的子命令
-      for (const [cmdName, desc] of Object.entries(COMMAND_DESCRIPTIONS)) {
-        // 检查是否是这个插件的子命令（以插件命令开头）
-        for (const handlerCmd of cmdHandlers) {
-          if (cmdName.startsWith(handlerCmd) && cmdName !== handlerCmd) {
-            // 转换格式：aiconfig -> ai config
-            const subCmd = cmdName.slice(handlerCmd.length);
-            const fullCmd = subCmd ? `${handlerCmd} ${subCmd}` : cmdName;
+      // 定义子命令分组（用于 cmdHandlers 格式的插件）
+      const subCommandGroups: Record<string, string[]> = {
+        "ai": [
+          "config status", "config add", "config update", "config remove", "config list", "config model",
+          "model list", "model default", "model auto", "model chat", "model search", "model image", "model tts",
+          "context on", "context off", "context show", "context del",
+          "collapse on", "collapse off", "collapse limit", "collapse list",
+          "telegraph on", "telegraph off", "telegraph limit", "telegraph list", "telegraph del",
+          "prompt set", "prompt clear", "prompt show",
+          "timeout",
+          "maxtokens",
+          "preview",
+          "voice",
+          "stats", "stat"
+        ]
+      };
+      
+      for (const handlerCmd of cmdHandlers) {
+        const subCmds = subCommandGroups[handlerCmd];
+        if (subCmds) {
+          for (const sub of subCmds) {
+            const fullCmd = `${handlerCmd} ${sub}`;
+            const desc = COMMAND_DESCRIPTIONS[`${handlerCmd}${sub.replace(/\s+/g, '')}`] || "执行该子命令";
             detailText += `${EMOJI.DOT} ${copyCmd(fullCmd, prefix)} ${EMOJI.ARROW} ${desc}\n`;
           }
         }
