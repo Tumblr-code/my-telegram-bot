@@ -181,13 +181,36 @@ class PluginManager {
   }
 
   getCommand(name: string): { plugin: string; def: CommandDefinition } | undefined {
-    // 检查别名
-    const aliased = this.aliases.get(name);
+    // 首先尝试精确匹配别名
+    let aliased = this.aliases.get(name);
+    
+    // 大小写不敏感匹配别名
+    if (!aliased) {
+      const lowerName = name.toLowerCase();
+      for (const [key, value] of this.aliases) {
+        if (key.toLowerCase() === lowerName) {
+          aliased = value;
+          break;
+        }
+      }
+    }
+    
     if (aliased) {
       name = aliased;
     }
     
-    return this.commands.get(name);
+    // 首先尝试精确匹配命令
+    const exact = this.commands.get(name);
+    if (exact) return exact;
+    
+    // 大小写不敏感匹配命令
+    const lowerName = name.toLowerCase();
+    for (const [key, value] of this.commands) {
+      if (key.toLowerCase() === lowerName) {
+        return value;
+      }
+    }
+    return undefined;
   }
 
   getAllCommands(): Record<string, CommandDefinition> {
@@ -201,7 +224,18 @@ class PluginManager {
   }
 
   getPlugin(name: string): Plugin | undefined {
-    return this.plugins.get(name)?.instance;
+    // 首先尝试精确匹配
+    const exact = this.plugins.get(name);
+    if (exact) return exact.instance;
+    
+    // 大小写不敏感匹配
+    const lowerName = name.toLowerCase();
+    for (const [key, value] of this.plugins) {
+      if (key.toLowerCase() === lowerName) {
+        return value.instance;
+      }
+    }
+    return undefined;
   }
 
   getAllPlugins(): Plugin[] {
