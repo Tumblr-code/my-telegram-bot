@@ -6,10 +6,11 @@ import { CommandHandler } from "./core/commandHandler.js";
 import { logger } from "./utils/logger.js";
 import { db } from "./utils/database.js";
 import { healthChecker } from "./utils/healthCheck.js";
+import { VERSION } from "./utils/version.js";
 
 async function main() {
   try {
-    logger.info("🚀 NexBot 启动中...");
+    logger.info(`🚀 NexBot v${VERSION} 启动中...`);
     logger.info(`环境: ${process.env.NODE_ENV || "production"}`);
 
     // 检查必要的环境变量
